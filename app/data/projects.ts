@@ -67,8 +67,8 @@ export const PROJECTS: Project[] = [
         category: "transformations",
         description: "This mid-century tuxedo sofa was given a new life with a vibrant royal blue velvet. The focus was on maintaining the sharp, clean lines while improving the seat comfort with high-density foam.",
         images: {
-            hero: "/assets/portfolio/p2.jpg",
-            after: ["/assets/portfolio/p2.jpg"]
+            hero: "/assets/portfolio/P2.jpg",
+            after: ["/assets/portfolio/P2.jpg"]
         }
     },
     {
@@ -78,8 +78,8 @@ export const PROJECTS: Project[] = [
         category: "residential",
         description: "A pair of elegant wingbacks updated in a soft cream performance fabric. Perfect for a busy living room, this fabric is stain-resistant while looking luxurious.",
         images: {
-            hero: "/assets/portfolio/p3.jpg",
-            after: ["/assets/portfolio/p3.jpg"]
+            hero: "/assets/portfolio/P3.jpg",
+            after: ["/assets/portfolio/P3.jpg"]
         }
     },
     {
@@ -89,8 +89,8 @@ export const PROJECTS: Project[] = [
         category: "antique",
         description: "Restoring this classic Chesterfield required careful attention to the button alignment. The emerald green velvet adds a bold, sophisticated touch to the client's library.",
         images: {
-            hero: "/assets/portfolio/p4.jpg",
-            after: ["/assets/portfolio/p4.jpg"]
+            hero: "/assets/portfolio/P4.jpg",
+            after: ["/assets/portfolio/P4.jpg"]
         }
     },
     {
@@ -100,8 +100,8 @@ export const PROJECTS: Project[] = [
         category: "commercial",
         description: "Designed and built from scratch in our workshop. This modular sectional features top-grain leather and a reinforced hardwood frame for durability.",
         images: {
-            hero: "/assets/portfolio/p5.jpg",
-            madeHere: ["/assets/portfolio/p5.jpg"]
+            hero: "/assets/portfolio/P5.jpg",
+            madeHere: ["/assets/portfolio/P5.jpg"]
         }
     },
     {
@@ -111,8 +111,8 @@ export const PROJECTS: Project[] = [
         category: "residential",
         description: "A streamlined, modern club chair reupholstered in a textured grey weave. Simple, clean, and comfortable.",
         images: {
-            hero: "/assets/portfolio/p6.jpg",
-            after: ["/assets/portfolio/p6.jpg"]
+            hero: "/assets/portfolio/P6.jpg",
+            after: ["/assets/portfolio/P6.jpg"]
         }
     },
     {
@@ -122,8 +122,8 @@ export const PROJECTS: Project[] = [
         category: "antique",
         description: "This sentimental piece was restored using a complex patterned fabric. Pattern matching was critical to align the design across the seat, back, and arms perfectly.",
         images: {
-            hero: "/assets/portfolio/p7.jpg",
-            before: ["/assets/portfolio/p7.jpg"] // Placeholder
+            hero: "/assets/portfolio/P7.jpg",
+            before: ["/assets/portfolio/P7.jpg"] // Placeholder
         }
     },
     {
@@ -133,8 +133,8 @@ export const PROJECTS: Project[] = [
         category: "residential",
         description: "An elegant chaise featuring a classic stripe pattern. The skirt was tailored to hang perfectly flush with the floor.",
         images: {
-            hero: "/assets/portfolio/p8.jpg",
-            after: ["/assets/portfolio/p8.jpg"]
+            hero: "/assets/portfolio/P8.jpg",
+            after: ["/assets/portfolio/P8.jpg"]
         }
     }
 ];

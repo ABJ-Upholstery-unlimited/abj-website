@@ -4,11 +4,11 @@ import { useState, useEffect } from "react";
 import { ChevronDown } from "lucide-react";
 
 const HERO_IMAGES = [
-    "/assets/portfolio/p1.jpg", // Dark Wingback
-    "/assets/portfolio/p2.jpg", // Blue Sofa
-    "/assets/portfolio/p4.jpg", // Green Chesterfield
-    "/assets/portfolio/p6.jpg", // Modern Club
-    "/assets/portfolio/p3.jpg"  // Cream Pairs
+    "/assets/portfolio/P1.jpg", // Dark Wingback
+    "/assets/portfolio/P2.jpg", // Blue Sofa
+    "/assets/portfolio/P4.jpg", // Green Chesterfield
+    "/assets/portfolio/P6.jpg", // Modern Club
+    "/assets/portfolio/P3.jpg"  // Cream Pairs
 ];
 
 export default function Hero() {
