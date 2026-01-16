@@ -108,18 +108,19 @@ export default function Gallery() {
 
             {/* PROJECT MODAL */}
             {selectedProject && (
-                <div className="fixed inset-0 z-[60] bg-navy/95 backdrop-blur-md flex items-center justify-center p-0 md:p-4 animate-in fade-in duration-300">
+                <div className="fixed inset-0 z-[100] bg-navy/95 backdrop-blur-md flex items-center justify-center p-0 md:p-4 animate-in fade-in duration-300">
                     <div className="relative w-full h-full md:max-w-6xl md:h-[90vh] bg-navy md:border border-white/10 md:rounded-2xl overflow-hidden shadow-2xl flex flex-col md:flex-row">
-
-                        <button
-                            onClick={() => setSelectedProject(null)}
-                            className="absolute top-4 right-4 z-50 p-2 bg-black/50 text-white hover:bg-gold hover:text-navy rounded-full transition-colors"
-                        >
-                            <X size={24} />
-                        </button>
 
                         {/* Main Image Stage */}
                         <div className="w-full md:w-2/3 h-1/2 md:h-full bg-black relative">
+                            {/* CLOSE BUTTON (On top of hero image) */}
+                            <button
+                                onClick={() => setSelectedProject(null)}
+                                className="absolute top-4 right-4 z-50 p-2 bg-white/90 backdrop-blur-sm text-navy hover:bg-gold rounded-full shadow-lg transition-all transform hover:scale-110"
+                            >
+                                <X size={24} />
+                            </button>
+
                             <div
                                 className="w-full h-full bg-contain bg-center bg-no-repeat transition-all duration-500"
                                 style={{ backgroundImage: `url(${activeImage || selectedProject.images.hero})` }}
