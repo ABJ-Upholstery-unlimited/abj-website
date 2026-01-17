@@ -35,14 +35,14 @@ export default function Navbar() {
 
     return (
         <nav className="fixed top-0 left-0 right-0 z-50 bg-[#002244]/90 backdrop-blur-md border-b border-white/5 h-20 transition-all">
-            <div className="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
+            <div className="relative max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
 
                 {/* Logo */}
                 <div onClick={scrollToTop} className="cursor-pointer font-serif text-2xl text-white tracking-wider flex items-center gap-3 relative z-50">
                     <img
                         src="/assets/brand/abj-logo-white.png"
                         alt="ABJ Upholstery"
-                        className="h-10 w-auto object-contain hover:opacity-80 transition-opacity"
+                        className="h-8 md:h-10 w-auto object-contain hover:opacity-80 transition-opacity"
                     />
                 </div>
 
