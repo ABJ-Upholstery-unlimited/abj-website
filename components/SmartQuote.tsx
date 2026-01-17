@@ -46,7 +46,7 @@ export default function SmartQuote() {
         <section className="relative z-30 px-4 max-w-7xl mx-auto">
 
             {/* GLASS PANEL CONTAINER */}
-            <div className="bg-navy/40 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex flex-col lg:flex-row min-h-[500px] ring-1 ring-white/5 relative overflow-hidden">
+            <div className="bg-navy/30 backdrop-blur-3xl border border-white/10 border-b-white/5 rounded-2xl shadow-[0_35px_60px_-15px_rgba(0,0,0,0.8)] flex flex-col lg:flex-row min-h-[500px] ring-1 ring-white/5 relative overflow-hidden">
                 {/* Shine Effect */}
                 <div className="absolute -top-full left-0 w-full h-[200%] bg-gradient-to-b from-white/5 to-transparent skew-y-12 pointer-events-none"></div>
 
