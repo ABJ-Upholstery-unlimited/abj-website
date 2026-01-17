@@ -4,35 +4,32 @@ import { useState } from "react";
 import { ChevronLeft, ChevronRight, Check, MapPin, Armchair, Sofa, Bed } from "lucide-react";
 import clsx from "clsx";
 
-// Mock Data for Carousel
+// Mock Data for Carousel (Base Models)
 const FURNITURE_TYPES = [
-    { id: "chair", name: "Wingback Chair", icon: <Armchair size={64} /> },
-    { id: "sofa", name: "3-Seater Sofa", icon: <Sofa size={64} /> },
-    { id: "ottoman", name: "Large Ottoman", icon: <Bed size={64} /> }, // Using Bed as placeholder for Ottoman
+    { id: "chair_dining", name: "Dining Chair", icon: <Armchair size={64} />, scale: "scale_1person.png" },
+    { id: "chair_accent", name: "Wingback Chair", icon: <Armchair size={64} />, scale: "scale_1person.png" },
+    { id: "sofa_2seat", name: "Loveseat", icon: <Sofa size={64} />, scale: "scale_2people.png" },
+    { id: "sofa_3seat", name: "Sofa", icon: <Sofa size={64} />, scale: "scale_3people.png" },
+    { id: "sectional", name: "Sectional", icon: <Sofa size={64} />, scale: "scale_3people.png" },
+    { id: "ottoman", name: "Ottoman", icon: <Bed size={64} />, scale: "scale_1person.png" },
 ];
 
-// Mock Data for Attributes
-const ATTRIBUTES = [
-    { id: "tufting", label: "Tufting", icon: "❖" }, // Placeholder icon
-    { id: "buttons", label: "Bush Buttons", icon: "•" },
-    { id: "skirt_pleat", label: "Skirt (Pleats)", icon: "mmm" },
-    { id: "skirt_ruffle", label: "Skirt (Ruffle)", icon: "~~~" },
-    { id: "piping", label: "Piping", icon: "∫" },
-    { id: "arm_covers", label: "Arm Covers", icon: "∩" },
+// Labor Variations (Mutually Exclusive)
+const LABOR_VARIATIONS = [
+    { id: "level_1", label: "Seat Only", desc: "Just the cushion/seat", icon: "➊" },
+    { id: "level_2", label: "Seat & Back", desc: "Arms/Legs exposed", icon: "➋" },
+    { id: "level_3", label: "Standard", desc: "Fully Upholstered", icon: "➌" },
+    { id: "level_4", label: "Tufted/Complex", desc: "Deep button or channels", icon: "➍" },
+    { id: "level_5", label: "Skirted", desc: "Fabric to floor", icon: "➎" },
+    { id: "level_6", label: "Loose Cushion", desc: "Pillow back style", icon: "➏" },
 ];
 
 export default function SmartQuote() {
-    const [currentBaseIndex, setCurrentBaseIndex] = useState(0);
-    const [selectedAttributes, setSelectedAttributes] = useState<string[]>([]);
+    const [currentBaseIndex, setCurrentBaseIndex] = useState(1); // Default to Wingback (idx 1)
+    const [selectedLabor, setSelectedLabor] = useState("level_3"); // Default to Full Simple
     const [material, setMaterial] = useState("fabric");
 
     const currentFurniture = FURNITURE_TYPES[currentBaseIndex];
-
-    const toggleAttribute = (id: string) => {
-        setSelectedAttributes(prev =>
-            prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]
-        );
-    };
 
     const nextSlide = () => {
         setCurrentBaseIndex((prev) => (prev + 1) % FURNITURE_TYPES.length);
@@ -42,11 +39,16 @@ export default function SmartQuote() {
         setCurrentBaseIndex((prev) => (prev - 1 + FURNITURE_TYPES.length) % FURNITURE_TYPES.length);
     };
 
+    // Construct Dynamic Image Paths
+    const baseImagePath = `/assets/quote/${currentFurniture.id}/base.png`;
+    const laborImagePath = `/assets/quote/${currentFurniture.id}/labor_${selectedLabor}.png`;
+    const scaleImagePath = `/assets/quote/overlays/${currentFurniture.scale}`;
+
     return (
         <section className="relative z-30 px-4 max-w-7xl mx-auto">
 
             {/* GLASS PANEL CONTAINER */}
-            <div className="bg-navy/30 backdrop-blur-3xl border border-white/10 border-b-white/5 rounded-2xl shadow-[0_35px_60px_-15px_rgba(0,0,0,0.8)] flex flex-col lg:flex-row min-h-[500px] ring-1 ring-white/5 relative overflow-hidden">
+            <div className="bg-navy/5 backdrop-blur-[40px] border border-white/20 border-b-white/10 rounded-2xl shadow-[0_50px_100px_-20px_rgba(0,0,0,0.9)] flex flex-col lg:flex-row min-h-[600px] ring-1 ring-white/10 relative overflow-hidden transition-all duration-500">
                 {/* Shine Effect */}
                 <div className="absolute -top-full left-0 w-full h-[200%] bg-gradient-to-b from-white/5 to-transparent skew-y-12 pointer-events-none"></div>
 
@@ -56,12 +58,15 @@ export default function SmartQuote() {
                     <ul className="space-y-6">
                         {[
                             { num: "1", text: "Select Base Model" },
-                            { num: "2", text: "Add Visual Details" },
+                            { num: "2", text: "Select Configuration" },
                             { num: "3", text: "Choose Material" },
                             { num: "4", text: "Check Logistics" }
                         ].map((step, idx) => (
                             <li key={idx} className="flex items-center gap-4 group">
-                                <span className="w-8 h-8 rounded-full border border-gold/30 text-gold flex items-center justify-center text-sm font-bold group-hover:bg-gold group-hover:text-navy transition-colors">
+                                <span className={clsx(
+                                    "w-8 h-8 rounded-full border flex items-center justify-center text-sm font-bold transition-colors",
+                                    idx === 1 ? "bg-gold text-navy border-gold" : "border-gold/30 text-gold"
+                                )}>
                                     {step.num}
                                 </span>
                                 <span className="text-white/80 font-sans tracking-wide text-sm">{step.text}</span>
@@ -69,71 +74,95 @@ export default function SmartQuote() {
                         ))}
                     </ul>
                     <p className="mt-8 text-white/40 text-xs leading-relaxed">
-                        Follow these simple steps to get an estimated price range for your restoration project immediately.
+                        Select the configuration that best matches your furniture's current style to determine labor intensity.
                     </p>
                 </div>
 
-                {/* --- COL 2: BASE SELECTION (CAROUSEL) --- */}
-                <div className="lg:w-1/4 p-6 border-b lg:border-b-0 lg:border-r border-white/10 flex flex-col items-center justify-center relative bg-white/5">
-                    <h4 className="absolute top-6 text-white/50 text-xs uppercase tracking-widest">Base Model</h4>
+                {/* --- COL 2: VISUALIZER (LAYERS) --- */}
+                <div className="lg:w-1/4 p-6 border-b lg:border-b-0 lg:border-r border-white/10 flex flex-col items-center justify-center relative bg-white/5 group overflow-hidden">
+                    <h4 className="absolute top-6 text-white/50 text-xs uppercase tracking-widest z-10">Base Model</h4>
 
                     {/* Carousel Controls */}
-                    <button onClick={prevSlide} className="absolute left-4 p-2 text-white/50 hover:text-gold hover:bg-white/10 rounded-full transition-all">
+                    <button onClick={prevSlide} className="absolute left-4 z-20 p-2 text-white/50 hover:text-gold hover:bg-white/10 rounded-full transition-all">
                         <ChevronLeft size={32} />
                     </button>
-                    <button onClick={nextSlide} className="absolute right-4 p-2 text-white/50 hover:text-gold hover:bg-white/10 rounded-full transition-all">
+                    <button onClick={nextSlide} className="absolute right-4 z-20 p-2 text-white/50 hover:text-gold hover:bg-white/10 rounded-full transition-all">
                         <ChevronRight size={32} />
                     </button>
 
-                    {/* Active Item */}
-                    <div className="flex flex-col items-center gap-6 animate-in fade-in zoom-in duration-300">
-                        <div className="text-white/90 drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]">
-                            {currentFurniture.icon}
+                    {/* --- THE 3-LAYER COMPOSITOR --- */}
+                    <div className="relative w-64 h-64 flex items-center justify-center">
+
+                        {/* 1. SCALE LAYER (Ghost) - Behind or Top? User said 'use person to establish size'. Let's put it BEHIND but visible, or Overlay. Code plan says 'ghost overlay'. Let's put it at z-0 with opacity. */}
+                        {/* Actually, user said 'person... at all moments'. It might look better behind the bold white lines so it doesn't obscure the furniture. */}
+                        <div className="absolute inset-0 z-0 opacity-30 pointer-events-none transform scale-110">
+                            {/* <img src={scaleImagePath} alt="Scale" className="w-full h-full object-contain" /> */}
+                            {/* Placeholder for Scale until generated */}
+                            <div className="w-full h-full border border-dashed border-white/10 rounded-full flex items-center justify-center text-[8px] text-white/20">Scale Layer</div>
                         </div>
-                        <span className="text-xl font-serif text-white">{currentFurniture.name}</span>
+
+                        {/* 2. BASE LAYER (White Lines) */}
+                        <div className="absolute inset-0 z-10 drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]">
+                            {/* <img src={baseImagePath} alt="Base" className="w-full h-full object-contain" /> */}
+                            {/* Using Icon as placeholder for now */}
+                            <div className="w-full h-full flex items-center justify-center text-white">
+                                {currentFurniture.icon}
+                            </div>
+                        </div>
+
+                        {/* 3. LABOR LAYER (Blue Splash) */}
+                        <div className="absolute inset-0 z-20 mix-blend-screen opacity-80 pointer-events-none">
+                            {/* <img src={laborImagePath} alt="Labor" className="w-full h-full object-contain" /> */}
+                        </div>
+                    </div>
+
+                    <div className="mt-8 text-center z-10">
+                        <span className="text-xl font-serif text-white block">{currentFurniture.name}</span>
+                        <span className="text-gold text-xs uppercase tracking-widest">{LABOR_VARIATIONS.find(l => l.id === selectedLabor)?.label}</span>
                     </div>
 
                     {/* Indicators */}
-                    <div className="absolute bottom-6 flex gap-2">
+                    <div className="absolute bottom-6 flex gap-2 z-10">
                         {FURNITURE_TYPES.map((_, idx) => (
                             <div key={idx} className={clsx("w-2 h-2 rounded-full transition-all", idx === currentBaseIndex ? "bg-gold w-4" : "bg-white/20")} />
                         ))}
                     </div>
                 </div>
 
-                {/* --- COL 3: ATTRIBUTES (VISUAL ROWS) --- */}
+                {/* --- COL 3: LABOR VARIATION (RADIO GRID) --- */}
                 <div className="lg:w-1/4 p-6 border-b lg:border-b-0 lg:border-r border-white/10 overflow-y-auto">
-                    <h4 className="text-white/50 text-xs uppercase tracking-widest mb-6 text-center">Visual Details</h4>
+                    <h4 className="text-white/50 text-xs uppercase tracking-widest mb-6 text-center">Style & Labor</h4>
 
-                    <div className="space-y-3">
-                        {ATTRIBUTES.map((attr) => {
-                            const isSelected = selectedAttributes.includes(attr.id);
+                    <div className="grid grid-cols-1 gap-3">
+                        {LABOR_VARIATIONS.map((varItem) => {
+                            const isSelected = selectedLabor === varItem.id;
                             return (
                                 <div
-                                    key={attr.id}
-                                    onClick={() => toggleAttribute(attr.id)}
+                                    key={varItem.id}
+                                    onClick={() => setSelectedLabor(varItem.id)}
                                     className={clsx(
-                                        "flex items-center justify-between p-3 rounded-lg border transition-all cursor-pointer group",
-                                        isSelected ? "bg-gold/10 border-gold" : "bg-white/5 border-transparent hover:bg-white/10"
+                                        "flex items-center gap-4 p-3 rounded-lg border transition-all cursor-pointer group",
+                                        isSelected ? "bg-gold/10 border-gold shadow-[0_0_15px_rgba(197,160,89,0.1)]" : "bg-white/5 border-transparent hover:bg-white/10"
                                     )}
                                 >
-                                    {/* Left: Checkbox & Label */}
-                                    <div className="flex items-center gap-3">
-                                        <div className={clsx(
-                                            "w-5 h-5 rounded border flex items-center justify-center transition-colors",
-                                            isSelected ? "bg-gold border-gold text-navy" : "border-white/30"
-                                        )}>
-                                            {isSelected && <Check size={14} strokeWidth={3} />}
-                                        </div>
-                                        <span className={clsx("text-sm", isSelected ? "text-gold font-medium" : "text-white/80")}>
-                                            {attr.label}
-                                        </span>
+                                    {/* Number/Icon */}
+                                    <div className={clsx(
+                                        "w-8 h-8 rounded flex items-center justify-center text-xs font-bold transition-all",
+                                        isSelected ? "bg-gold text-navy" : "bg-white/10 text-white/40"
+                                    )}>
+                                        {varItem.icon}
                                     </div>
 
-                                    {/* Right: Visual Icon (Placeholder for now) */}
-                                    <div className="w-8 h-8 bg-black/20 rounded flex items-center justify-center text-white/40 text-xs font-mono">
-                                        {attr.icon}
+                                    {/* Text */}
+                                    <div>
+                                        <h5 className={clsx("text-sm font-medium transition-colors", isSelected ? "text-gold" : "text-white/90")}>
+                                            {varItem.label}
+                                        </h5>
+                                        <p className="text-[10px] text-white/40">{varItem.desc}</p>
                                     </div>
+
+                                    {/* Check */}
+                                    {isSelected && <Check size={16} className="text-gold ml-auto" />}
                                 </div>
                             );
                         })}
