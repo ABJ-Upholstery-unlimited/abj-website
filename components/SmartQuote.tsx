@@ -216,8 +216,8 @@ export default function SmartQuote() {
                             </div>
                         </div>
 
-                        <button className="w-full bg-gold hover:bg-white text-navy font-bold py-4 rounded-xl uppercase tracking-widest transition-all hover:scale-[1.02] shadow-[0_0_20px_rgba(197,160,89,0.3)]">
-                            Request Quote
+                        <button className="w-full bg-gold/50 cursor-not-allowed text-navy font-bold py-4 rounded-xl uppercase tracking-widest transition-all shadow-none">
+                            Coming Soon
                         </button>
                     </div>
 
