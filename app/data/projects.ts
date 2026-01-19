@@ -54,10 +54,10 @@ export const PROJECTS: Project[] = [
         description: "A breathtaking restoration of a 19th-century Rococo Revival living suite. The ornate frames were meticulously ebonized to a high-gloss black finish, creating a dramatic contrast with the crisp, Belgian white linen upholstery. The sofa features traditional deep-button diamond tufting, honoring the piece's historical grandeur while fitting perfectly into a modern formal living space.",
         images: {
             hero: "/assets/portfolio/Project_02/After/hero.jpg",
-            before: ["/assets/portfolio/Project_02/Before/Before_01.jpg", "/assets/portfolio/Project_02/Before/Before_02.jpg"],
-            process: ["/assets/portfolio/Project_02/Process/Process_01.jpg", "/assets/portfolio/Project_02/Process/Process_02.jpg"],
-            madeHere: ["/assets/portfolio/Project_02/Made_Here/Made_Here_01.jpg", "/assets/portfolio/Project_02/Made_Here/Made_Here_02.jpg"],
-            after: ["/assets/portfolio/Project_02/After/hero.jpg", "/assets/portfolio/Project_02/After/After_01.jpg", "/assets/portfolio/Project_02/After/After_02.jpg"]
+            before: ["/assets/portfolio/Project_02/Before/BEFORE_01.jpg", "/assets/portfolio/Project_02/Before/BEFORE_02.jpg"],
+            process: ["/assets/portfolio/Project_02/Process/PROCESS_01.jpg", "/assets/portfolio/Project_02/Process/PROCESS_02.jpg"],
+            madeHere: ["/assets/portfolio/Project_02/Made_here/MADE_HERE_01.jpg", "/assets/portfolio/Project_02/Made_here/MADE_HERE_02.jpg"],
+            after: ["/assets/portfolio/Project_02/After/hero.jpg", "/assets/portfolio/Project_02/After/AFTER_01.jpg", "/assets/portfolio/Project_02/After/AFTER_02.jpg"]
         }
     },
     {
@@ -90,7 +90,7 @@ export const PROJECTS: Project[] = [
         description: "Restoring this classic Chesterfield required careful attention to the button alignment. The emerald green velvet adds a bold, sophisticated touch to the client's library.",
         images: {
             hero: "/assets/portfolio/P4.jpg",
-            after: ["/assets/portfolio/P4.jpg"]
+            after: ["/assets/portfolio/Project_02/Process/PROCESS_01.jpg"]
         }
     },
     {
