@@ -89,7 +89,7 @@ export const PROJECTS: Project[] = [
         category: "antique",
         description: "Restoring this classic Chesterfield required careful attention to the button alignment. The emerald green velvet adds a bold, sophisticated touch to the client's library.",
         images: {
-            hero: "/assets/portfolio/GreenChesterfield_Hero.jpg",
+            hero: "/assets/portfolio/P2.jpg",
             after: ["/assets/portfolio/GreenChesterfield_Hero.jpg"]
         }
     },
