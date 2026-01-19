@@ -89,3 +89,22 @@ If you changed a photo but don't see it:
     * `Project_01` is NOT the same as `project_01`.
 3. **Hard Refresh:** Your browser might be remembering the old version.
     * Press `Ctrl` + `F5` (Windows) to force a reload.
+
+---
+
+## 5. How to Publish to the Live Website (The "Go Live" Button)
+
+When you save files on your computer, they update **Localhost** immediately.
+To update `abjupholstery.com`, you must **Publish** them.
+
+I have created a special "Magic Button" script for you.
+
+**The Steps:**
+
+1. Make all your changes (add photos, edit text) and verify them on `localhost:3000`.
+2. Open your project folder in File Explorer.
+3. Double-click the file named **`deploy_updates.bat`**.
+4. A black window will appear, show some text, and then say "SUCCESS".
+5. Wait 2 minutes. Your live website is now updated.
+
+> **Note:** You do NOT need to type code commands to update the site anymore. Just double-click `deploy_updates.bat`.
