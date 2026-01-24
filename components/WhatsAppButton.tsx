@@ -1,14 +1,14 @@
 "use client";
 
-import { MessageCircle } from "lucide-react";
+import { MessageCircle } = "lucide-react";
 
 export default function WhatsAppButton() {
     return (
         <a
-            href="https://wa.me/573004004503"
+            href="https://wa.me/573004004503?text=Hi%20ABJ!%20I'm%20interested%20in%20upholstery%20services."
             target="_blank"
             rel="noopener noreferrer"
-            className="fixed bottom-8 right-6 z-50 flex items-center gap-3 group"
+            className="fixed bottom-6 right-6 z-50 bg-[#25D366] text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-transform duration-300 flex items-center justify-center group"
         >
             <div className="bg-white/90 backdrop-blur text-navy px-4 py-2 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0 hidden md:block border border-navy/10 pointer-events-none group-hover:pointer-events-auto">
                 <span className="text-sm font-bold">Live Expert Assistance</span>

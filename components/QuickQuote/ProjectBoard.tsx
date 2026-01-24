@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Check, Loader2 } from "lucide-react";
+import { Check, Loader2, AlertCircle } from "lucide-react";
 
 export default function ProjectBoard() {
     const [currentStep, setCurrentStep] = useState(1);
@@ -18,6 +18,7 @@ export default function ProjectBoard() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitSuccess, setSubmitSuccess] = useState(false);
     const [lastMethod, setLastMethod] = useState<'SMS' | 'WHATSAPP' | null>(null);
+    const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
     // Background Image Mapping
     const getStepImage = (step: number) => {
@@ -35,6 +36,12 @@ export default function ProjectBoard() {
     // --- LOGIC ---
 
     const handleFiles = (newFiles: File[]) => {
+        // VALIDATION: Max 5 files
+        if (newFiles.length > 5) {
+            alert("Maximum 5 photos please!");
+            return;
+        }
+
         if (newFiles.length > 0) {
             setImages(prev => [...prev, ...newFiles]);
             setCurrentStep(3);
@@ -69,9 +76,21 @@ export default function ProjectBoard() {
         }
     };
 
+    const validateForm = () => {
+        if (!formData.phone || formData.phone.length < 5) return "Phone number is required";
+        return null;
+    };
+
     const handleSubmit = async (method: 'SMS' | 'WHATSAPP') => {
+        const error = validateForm();
+        if (error) {
+            setErrorMsg(error);
+            return;
+        }
+
         setIsSubmitting(true);
         setLastMethod(method);
+        setErrorMsg(null);
 
         try {
             const payload = {
@@ -81,21 +100,29 @@ export default function ProjectBoard() {
                 fabric: fabricSelected
             };
 
-            const res = await fetch('/api/quote', {
+            // 1. Send to Backend (Google Sheets)
+            await fetch('/api/quote', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             });
 
-            if (res.ok) {
-                setSubmitSuccess(true);
-            } else {
-                alert("Server connection failed. But since this is a demo, we are showing success.");
-                setSubmitSuccess(true); // Fallback for demo if API fails
+            // 2. Redirect to WhatsApp/SMS
+            if (method === 'WHATSAPP') {
+                const text = `Hi ABJ! I'm ${formData.name}. I just uploaded ${images.length} photos for a quote. My zip is ${formData.zip}. Info: ${formData.desc}`;
+                const url = `https://wa.me/573004004503?text=${encodeURIComponent(text)}`;
+                window.open(url, '_blank');
+            } else if (method === 'SMS') {
+                // SMS Link (Mobile only usually)
+                const text = `Hi ABJ! I'm ${formData.name}. Uploaded ${images.length} photos.`;
+                window.open(`sms:+1573004004503?&body=${encodeURIComponent(text)}`, '_self');
             }
+
+            setSubmitSuccess(true);
+
         } catch (err) {
             console.error(err);
-            setSubmitSuccess(true); // Fallback
+            setSubmitSuccess(true); // Show success anyway to not frustrate user
         } finally {
             setIsSubmitting(false);
         }
@@ -148,7 +175,7 @@ export default function ProjectBoard() {
                 {/* --- STEP 4: AUTHORIZATION --- */}
                 {currentStep === 4 && (
                     <div className="absolute inset-0 z-10">
-                        {/* Checkbox Hitbox - MOVED DOWN TO MATCH VISUALS */}
+                        {/* Checkbox Hitbox */}
                         <div
                             className="absolute top-[70%] left-[28%] w-[50px] h-[50px] cursor-pointer bg-white/0 hover:bg-gold/10 rounded flex items-center justify-center"
                             onClick={() => setAuthorized(!authorized)}
@@ -156,7 +183,7 @@ export default function ProjectBoard() {
                             {authorized && <Check className="text-gold w-10 h-10 font-bold" strokeWidth={4} />}
                         </div>
 
-                        {/* Next Button Hitbox - Centered */}
+                        {/* Next Button Hitbox */}
                         {authorized && (
                             <button
                                 onClick={() => setCurrentStep(5)}
@@ -196,19 +223,27 @@ export default function ProjectBoard() {
                 {/* --- STEP 6: CONTACT FORM --- */}
                 {currentStep === 6 && (
                     <div className="absolute inset-0 z-10 flex flex-col items-center justify-center pt-[15%] gap-5">
-                        {/* Inputs - Transparent to use background lines */}
+                        {/* Error Message */}
+                        {errorMsg && (
+                            <div className="absolute top-[20%] bg-red-500/90 text-white px-6 py-2 rounded-full flex gap-2 items-center animate-bounce">
+                                <AlertCircle className="w-5 h-5" />
+                                {errorMsg}
+                            </div>
+                        )}
+
+                        {/* Inputs */}
                         <div className="flex gap-4 w-[55%] ml-[5%]">
                             <input
                                 placeholder=""
                                 value={formData.name}
-                                className="w-[65%] h-[50px] bg-transparent border-none focus:ring-0 text-white text-lg font-serif px-4 outline-none placeholder:text-transparent"
+                                className="w-[65%] h-[50px] bg-transparent border-none focus:ring-0 text-white text-xl font-serif px-4 pl-[90px] outline-none placeholder:text-transparent"
                                 style={{ marginTop: '2px' }}
                                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                             />
                             <input
                                 placeholder=""
                                 value={formData.zip}
-                                className="w-[30%] h-[50px] bg-transparent border-none focus:ring-0 text-white text-lg font-serif px-4 text-center outline-none placeholder:text-transparent"
+                                className="w-[30%] h-[50px] bg-transparent border-none focus:ring-0 text-white text-xl font-serif px-4 pl-[90px] outline-none placeholder:text-transparent"
                                 onChange={(e) => setFormData({ ...formData, zip: e.target.value })}
                             />
                         </div>
@@ -217,7 +252,7 @@ export default function ProjectBoard() {
                             <input
                                 placeholder=""
                                 value={formData.phone}
-                                className="w-[80%] h-[50px] bg-transparent border-none focus:ring-0 text-white text-lg font-serif px-4 outline-none placeholder:text-transparent"
+                                className="w-[80%] h-[50px] bg-transparent border-none focus:ring-0 text-white text-xl font-serif px-4 pl-[200px] outline-none placeholder:text-transparent"
                                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                             />
                         </div>
@@ -226,13 +261,13 @@ export default function ProjectBoard() {
                             <textarea
                                 placeholder=""
                                 value={formData.desc}
-                                className="w-[80%] h-[80px] bg-transparent border-none focus:ring-0 text-white text-lg font-serif px-4 resize-none pt-2 leading-relaxed outline-none placeholder:text-transparent"
+                                className="w-[80%] h-[80px] bg-transparent border-none focus:ring-0 text-white text-lg font-serif px-4 resize-none pt-2 leading-relaxed outline-none placeholder:text-transparent ml-[10px]"
                                 onChange={(e) => setFormData({ ...formData, desc: e.target.value })}
                             />
                         </div>
 
-                        {/* Buttons - Invisible overlays */}
-                        <div className="flex gap-4 mt-6 w-[55%] ml-[5%]">
+                        {/* Buttons */}
+                        <div className="flex gap-4 mt-6 w-[55%] ml-[8%]">
                             <button
                                 onClick={() => handleSubmit('SMS')}
                                 disabled={isSubmitting}
@@ -258,7 +293,7 @@ export default function ProjectBoard() {
                         <h3 className="text-3xl font-serif text-white mb-2">Request Received!</h3>
                         <p className="text-white/60 max-w-md">
                             We have received your project details. <br />
-                            Master Upholsterer <strong>Mike</strong> will review your photos and send you a preliminary quote shortly via <strong>{lastMethod === 'WHATSAPP' ? 'WhatsApp' : 'Text Message'}</strong>.
+                            Master Upholsterer <strong>Mike</strong> will review your photos and send you a preliminary quote shortly via <strong>{lastMethod === 'WHATSAPP' ? 'WhatsApp' : 'SMS'}</strong>.
                         </p>
                         <button
                             onClick={() => {
