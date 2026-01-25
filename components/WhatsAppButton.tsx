@@ -1,6 +1,6 @@
 "use client";
 
-import { MessageCircle } = "lucide-react";
+import { MessageCircle } from "lucide-react";
 
 export default function WhatsAppButton() {
     return (
