@@ -1,71 +1,23 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { Check, Loader2, AlertCircle } from "lucide-react";
+import React, { useState } from "react";
+import { Check, Upload, Loader2, Camera, User, FileText, Phone } from "lucide-react";
 
 export default function ProjectBoard() {
-    const [currentStep, setCurrentStep] = useState(1);
     const [images, setImages] = useState<File[]>([]);
-    const [isDragOver, setIsDragOver] = useState(false);
-
-    // Step State
-    const [loading, setLoading] = useState(0); // Step 3
-    const [authorized, setAuthorized] = useState(false); // Step 4
-    const [fabricSelected, setFabricSelected] = useState<string | null>(null); // Step 5
-    const [formData, setFormData] = useState({ name: "", phone: "", zip: "", desc: "" }); // Step 6
-
-    // Submission State
+    const [fabricSelected, setFabricSelected] = useState<string | null>(null);
+    const [formData, setFormData] = useState({ name: "", phone: "", zip: "", desc: "" });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitSuccess, setSubmitSuccess] = useState(false);
-    const [lastMethod, setLastMethod] = useState<'SMS' | 'WHATSAPP' | null>(null);
-    const [errorMsg, setErrorMsg] = useState<string | null>(null);
-
-    // Background Image Mapping
-    const getStepImage = (step: number) => {
-        switch (step) {
-            case 1: return "/assets/quick_quote/QUICK_QUOTE_Step1_Load1.jpg";
-            case 2: return "/assets/quick_quote/QUICK_QUOTE_Step1_Drop2.jpg";
-            case 3: return "/assets/quick_quote/QUICK_QUOTE_Step1_Upload4.jpg";
-            case 4: return "/assets/quick_quote/QUICK_QUOTE_Step1_Project3.jpg";
-            case 5: return "/assets/quick_quote/QUICK_QUOTE_Step2_Fabric5.jpg";
-            case 6: return "/assets/quick_quote/QUICK_QUOTE_Step2_Contact6.jpg";
-            default: return "/assets/quick_quote/QUICK_QUOTE_Step1_Load1.jpg";
-        }
-    };
+    const [isDragOver, setIsDragOver] = useState(false);
 
     // --- LOGIC ---
-
     const handleFiles = (newFiles: File[]) => {
-        // VALIDATION: Max 5 files
-        if (newFiles.length > 5) {
-            alert("Maximum 5 photos please!");
+        if (newFiles.length + images.length > 5) {
+            alert("Maximum 5 photos allowed.");
             return;
         }
-
-        if (newFiles.length > 0) {
-            setImages(prev => [...prev, ...newFiles]);
-            setCurrentStep(3);
-            // Simulate Upload
-            setLoading(0);
-            const interval = setInterval(() => {
-                setLoading(prev => {
-                    if (prev >= 100) {
-                        clearInterval(interval);
-                        return 100;
-                    }
-                    return prev + 5;
-                });
-            }, 30);
-        }
-    };
-
-    const handleDragOver = (e: React.DragEvent) => {
-        e.preventDefault();
-        setIsDragOver(true);
-    };
-
-    const handleDragLeave = () => {
-        setIsDragOver(false);
+        setImages(prev => [...prev, ...newFiles]);
     };
 
     const handleDrop = (e: React.DragEvent) => {
@@ -76,229 +28,217 @@ export default function ProjectBoard() {
         }
     };
 
-    const validateForm = () => {
-        if (!formData.phone || formData.phone.length < 5) return "Phone number is required";
-        return null;
-    };
-
     const handleSubmit = async (method: 'SMS' | 'WHATSAPP') => {
-        const error = validateForm();
-        if (error) {
-            setErrorMsg(error);
+        if (!formData.phone || formData.phone.length < 5) {
+            alert("Please enter a valid phone number.");
             return;
         }
 
         setIsSubmitting(true);
-        setLastMethod(method);
-        setErrorMsg(null);
-
         try {
+            // Backend Submission
             const payload = {
                 client: formData,
                 images: images.map(f => f.name),
-                method: method,
+                method,
                 fabric: fabricSelected
             };
 
-            // 1. Send to Backend (Google Sheets)
             await fetch('/api/quote', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             });
 
-            // 2. Redirect to WhatsApp/SMS
+            // Redirect logic
             if (method === 'WHATSAPP') {
-                const text = `Hi ABJ! I'm ${formData.name}. I just uploaded ${images.length} photos for a quote. My zip is ${formData.zip}. Info: ${formData.desc}`;
-                const url = `https://wa.me/573004004503?text=${encodeURIComponent(text)}`;
-                window.open(url, '_blank');
-            } else if (method === 'SMS') {
-                // SMS Link (Mobile only usually)
-                const text = `Hi ABJ! I'm ${formData.name}. Uploaded ${images.length} photos.`;
+                const text = `Hi ABJ! I'm ${formData.name}. I'm interested in a quote. I have ${images.length} photos. Zip: ${formData.zip}. Info: ${formData.desc}`;
+                window.open(`https://wa.me/573004004503?text=${encodeURIComponent(text)}`, '_blank');
+            } else {
+                const text = `Hi ABJ! Quote Request from ${formData.name}.`;
                 window.open(`sms:+1573004004503?&body=${encodeURIComponent(text)}`, '_self');
             }
 
             setSubmitSuccess(true);
-
-        } catch (err) {
-            console.error(err);
-            setSubmitSuccess(true); // Show success anyway to not frustrate user
+        } catch (e) {
+            console.error(e);
+            alert("Connection error. Please try again.");
         } finally {
             setIsSubmitting(false);
         }
     };
 
     return (
-        <section className="w-full bg-navy-950 py-10 px-4 flex justify-center items-center min-h-[80vh] select-none">
-            <div
-                className={`relative w-full max-w-6xl aspect-video rounded-xl overflow-hidden shadow-2xl border border-white/10 transition-all group bg-black ${isDragOver ? 'ring-4 ring-gold scale-[1.01]' : ''}`}
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
-                onDrop={handleDrop}
-            >
-                {/* Active Step Background */}
+        <section className="w-full bg-navy-950 py-12 px-4 flex justify-center items-center select-none font-sans">
+            <div className="relative w-full max-w-6xl min-h-[600px] bg-navy-900 rounded-xl shadow-2xl border border-white/10 flex flex-col md:flex-row overflow-hidden">
+
+                {/* --- COL 1: UPLOAD PROJECT --- */}
                 <div
-                    className="absolute inset-0 bg-cover bg-center transition-all duration-700 ease-in-out"
-                    style={{ backgroundImage: `url('${getStepImage(currentStep)}')` }}
-                />
-
-                {/* --- STEP 1 & 2: GLOBAL CLICK UPLOAD --- */}
-                {(currentStep === 1 || currentStep === 2) && (
-                    <div className="absolute inset-0 z-10 cursor-pointer">
-                        <input
-                            type="file"
-                            multiple
-                            accept="image/*"
-                            className="absolute inset-0 opacity-0 cursor-pointer"
-                            onChange={(e) => e.target.files && handleFiles(Array.from(e.target.files))}
-                        />
+                    className={`relative flex-1 border-b md:border-b-0 md:border-r border-gold/30 p-6 flex flex-col transition-colors ${isDragOver ? 'bg-navy-800' : ''}`}
+                    onDragOver={(e) => { e.preventDefault(); setIsDragOver(true); }}
+                    onDragLeave={() => setIsDragOver(false)}
+                    onDrop={handleDrop}
+                >
+                    {/* Header (Vertical on Desktop) */}
+                    <div className="absolute left-0 top-0 bottom-0 w-12 hidden md:flex items-center justify-center border-r border-white/5 bg-navy-950/50">
+                        <h3 className="text-gold tracking-[0.2em] font-serif text-sm whitespace-nowrap -rotate-90 origin-center opacity-70">
+                            UPLOAD PROJECT
+                        </h3>
                     </div>
-                )}
 
-                {/* --- STEP 3: UPLOAD SIMULATION --- */}
-                {currentStep === 3 && (
-                    <div className="absolute inset-0 z-10 flex flex-col items-center justify-end pb-[10%]">
-                        {/* Visual Barrier */}
-                        {loading < 100 && <div className="absolute inset-0 z-20" />}
+                    <div className="md:pl-12 h-full flex flex-col">
+                        <h2 className="text-2xl font-serif text-white mb-6 md:hidden">Upload Project</h2>
 
-                        {/* Next Button Hitbox */}
-                        {loading === 100 && (
-                            <button
-                                onClick={() => setCurrentStep(4)}
-                                className="w-[200px] h-[80px] bg-white/0 hover:bg-gold/10 rounded-full transition-colors cursor-pointer absolute bottom-[10%] left-1/2 -translate-x-1/2"
-                                title="Proceed"
+                        {/* Drop Zone */}
+                        <div className="flex-1 border-2 border-dashed border-gold/40 rounded-lg flex flex-col items-center justify-center p-8 text-center group hover:border-gold hover:bg-gold/5 transition-all cursor-pointer relative">
+                            <input
+                                type="file"
+                                multiple
+                                className="absolute inset-0 opacity-0 cursor-pointer"
+                                onChange={(e) => e.target.files && handleFiles(Array.from(e.target.files))}
                             />
-                        )}
-                    </div>
-                )}
-
-                {/* --- STEP 4: AUTHORIZATION --- */}
-                {currentStep === 4 && (
-                    <div className="absolute inset-0 z-10">
-                        {/* Checkbox Hitbox */}
-                        <div
-                            className="absolute top-[70%] left-[28%] w-[50px] h-[50px] cursor-pointer bg-white/0 hover:bg-gold/10 rounded flex items-center justify-center"
-                            onClick={() => setAuthorized(!authorized)}
-                        >
-                            {authorized && <Check className="text-gold w-10 h-10 font-bold" strokeWidth={4} />}
+                            <Upload className="w-10 h-10 text-gold mb-4 group-hover:scale-110 transition-transform" />
+                            <p className="text-white/80 font-medium">Drag & Drop Photos</p>
+                            <p className="text-white/40 text-sm mt-2">or click to browse</p>
                         </div>
 
-                        {/* Next Button Hitbox */}
-                        {authorized && (
-                            <button
-                                onClick={() => setCurrentStep(5)}
-                                className="absolute bottom-[20%] left-1/2 -translate-x-1/2 w-[200px] h-[60px] cursor-pointer bg-white/0 hover:bg-gold/10 rounded-full"
-                                title="Authorized Next"
-                            />
-                        )}
-                    </div>
-                )}
-
-                {/* --- STEP 5: FABRIC SELECTION --- */}
-                {currentStep === 5 && (
-                    <div className="absolute inset-0 z-10">
-                        {/* Hitbox covering the fabric grid */}
-                        <div
-                            className="absolute top-[30%] left-[20%] right-[20%] bottom-[35%] cursor-pointer bg-white/0 hover:bg-gold/5 flex items-center justify-center"
-                            onClick={() => setFabricSelected("Generic Selection")}
-                        >
-                            {fabricSelected && (
-                                <div className="absolute inset-0 bg-gold/10 border-4 border-gold/50 rounded-xl flex items-center justify-center animate-pulse">
-                                    <span className="bg-navy-950/80 text-gold px-4 py-2 rounded font-bold">Selection Confirmed</span>
+                        {/* Photo Stack Preview */}
+                        <div className="mt-6 min-h-[100px] grid grid-cols-3 gap-2">
+                            {images.map((file, i) => (
+                                <div key={i} className="aspect-square bg-black/50 rounded border border-white/10 flex items-center justify-center overflow-hidden relative">
+                                    <img src={URL.createObjectURL(file)} alt="preview" className="w-full h-full object-cover opacity-80" />
+                                </div>
+                            ))}
+                            {images.length === 0 && (
+                                <div className="col-span-3 flex items-center justify-center text-white/20 italic text-sm">
+                                    No photos added yet
                                 </div>
                             )}
                         </div>
-
-                        {/* Next Button Hitbox */}
-                        {fabricSelected && (
-                            <button
-                                onClick={() => setCurrentStep(6)}
-                                className="absolute bottom-[15%] left-1/2 -translate-x-1/2 w-[200px] h-[60px] cursor-pointer bg-white/0 hover:bg-gold/10 rounded-full"
-                                title="Next"
-                            />
-                        )}
                     </div>
-                )}
+                </div>
 
-                {/* --- STEP 6: CONTACT FORM --- */}
-                {currentStep === 6 && (
-                    <div className="absolute inset-0 z-10 flex flex-col items-center justify-center pt-[15%] gap-5">
-                        {/* Error Message */}
-                        {errorMsg && (
-                            <div className="absolute top-[20%] bg-red-500/90 text-white px-6 py-2 rounded-full flex gap-2 items-center animate-bounce">
-                                <AlertCircle className="w-5 h-5" />
-                                {errorMsg}
+                {/* --- COL 2: FABRIC SELECTION --- */}
+                <div className="relative flex-1 border-b md:border-b-0 md:border-r border-gold/30 p-6 flex flex-col">
+                    {/* Header */}
+                    <div className="absolute left-0 top-0 bottom-0 w-12 hidden md:flex items-center justify-center border-r border-white/5 bg-navy-950/50">
+                        <h3 className="text-gold tracking-[0.2em] font-serif text-sm whitespace-nowrap -rotate-90 origin-center opacity-70">
+                            FABRIC SELECTION
+                        </h3>
+                    </div>
+
+                    <div className="md:pl-12 h-full flex flex-col">
+                        <h2 className="text-2xl font-serif text-white mb-6 md:hidden">Fabric Selection</h2>
+
+                        <div className="grid grid-cols-2 gap-4 flex-1 content-start">
+                            {['Leather', 'Velvet', 'Linen', 'Pattern', 'Vinyl', 'Other'].map((type) => (
+                                <button
+                                    key={type}
+                                    onClick={() => setFabricSelected(type)}
+                                    className={`p-4 rounded border transition-all text-left group ${fabricSelected === type ? 'bg-gold text-navy border-gold' : 'bg-transparent border-white/20 text-white hover:border-gold/50'}`}
+                                >
+                                    <span className="block text-sm font-bold tracking-wide uppercase">{type}</span>
+                                    {fabricSelected === type && <Check className="w-4 h-4 ml-auto mt-2" />}
+                                </button>
+                            ))}
+                        </div>
+
+                        <div className="mt-8 p-4 bg-navy-950/50 rounded border border-white/5">
+                            <p className="text-white/60 text-xs leading-relaxed">
+                                Don't know yet? Select <strong>"Other"</strong>. <br />
+                                Master Mike will bring sample books to your appointment.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* --- COL 3: CONTACT INFO --- */}
+                <div className="relative flex-[1.2] p-6 flex flex-col bg-navy-800/30">
+                    {/* Header */}
+                    <div className="absolute left-0 top-0 bottom-0 w-12 hidden md:flex items-center justify-center border-r border-white/5 bg-navy-950/50">
+                        <h3 className="text-gold tracking-[0.2em] font-serif text-sm whitespace-nowrap -rotate-90 origin-center opacity-70">
+                            CONTACT INFORMATION
+                        </h3>
+                    </div>
+
+                    <div className="md:pl-12 h-full flex flex-col justify-between">
+                        <h2 className="text-2xl font-serif text-white mb-6 md:hidden">Contact Info</h2>
+
+                        <div className="space-y-6">
+                            <div className="relative group">
+                                <User className="absolute left-4 top-1/2 -translate-y-1/2 text-gold/50 w-5 h-5 group-focus-within:text-gold transition-colors" />
+                                <input
+                                    placeholder="Your Name"
+                                    value={formData.name}
+                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                    className="w-full bg-navy-950 border border-gold/30 rounded p-4 pl-12 text-white placeholder:text-white/20 focus:border-gold outline-none transition-all"
+                                />
                             </div>
-                        )}
 
-                        {/* Inputs */}
-                        <div className="flex gap-4 w-[55%] ml-[5%]">
-                            <input
-                                placeholder=""
-                                value={formData.name}
-                                className="w-[65%] h-[50px] bg-transparent border-none focus:ring-0 text-white text-xl font-serif px-4 pl-[90px] outline-none placeholder:text-transparent"
-                                style={{ marginTop: '2px' }}
-                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                            />
-                            <input
-                                placeholder=""
-                                value={formData.zip}
-                                className="w-[30%] h-[50px] bg-transparent border-none focus:ring-0 text-white text-xl font-serif px-4 pl-[90px] outline-none placeholder:text-transparent"
-                                onChange={(e) => setFormData({ ...formData, zip: e.target.value })}
-                            />
+                            <div className="flex gap-4">
+                                <div className="relative group flex-[2]">
+                                    <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-gold/50 w-5 h-5 group-focus-within:text-gold transition-colors" />
+                                    <input
+                                        placeholder="Phone Number"
+                                        value={formData.phone}
+                                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                                        className="w-full bg-navy-950 border border-gold/30 rounded p-4 pl-12 text-white placeholder:text-white/20 focus:border-gold outline-none transition-all"
+                                    />
+                                </div>
+                                <div className="relative group flex-1">
+                                    <input
+                                        placeholder="Zip"
+                                        value={formData.zip}
+                                        onChange={(e) => setFormData({ ...formData, zip: e.target.value })}
+                                        className="w-full bg-navy-950 border border-gold/30 rounded p-4 text-center text-white placeholder:text-white/20 focus:border-gold outline-none transition-all"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="relative group">
+                                <FileText className="absolute left-4 top-4 text-gold/50 w-5 h-5 group-focus-within:text-gold transition-colors" />
+                                <textarea
+                                    placeholder="Describe your project (e.g., 'Sofa needs reupholstery, cushions are sagging')..."
+                                    value={formData.desc}
+                                    onChange={(e) => setFormData({ ...formData, desc: e.target.value })}
+                                    className="w-full h-32 bg-navy-950 border border-gold/30 rounded p-4 pl-12 text-white placeholder:text-white/20 focus:border-gold outline-none transition-all resize-none leading-relaxed"
+                                />
+                            </div>
                         </div>
 
-                        <div className="w-[55%] ml-[5%]">
-                            <input
-                                placeholder=""
-                                value={formData.phone}
-                                className="w-[80%] h-[50px] bg-transparent border-none focus:ring-0 text-white text-xl font-serif px-4 pl-[200px] outline-none placeholder:text-transparent"
-                                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                            />
-                        </div>
-
-                        <div className="w-[55%] ml-[5%]">
-                            <textarea
-                                placeholder=""
-                                value={formData.desc}
-                                className="w-[80%] h-[80px] bg-transparent border-none focus:ring-0 text-white text-lg font-serif px-4 resize-none pt-2 leading-relaxed outline-none placeholder:text-transparent ml-[10px]"
-                                onChange={(e) => setFormData({ ...formData, desc: e.target.value })}
-                            />
-                        </div>
-
-                        {/* Buttons */}
-                        <div className="flex gap-4 mt-6 w-[55%] ml-[8%]">
+                        <div className="mt-8 flex gap-4">
                             <button
                                 onClick={() => handleSubmit('SMS')}
                                 disabled={isSubmitting}
-                                className="flex-1 h-[60px] cursor-pointer bg-white/0 hover:bg-white/5 rounded-full"
-                                title="Send Text"
-                            />
+                                className="flex-1 py-4 bg-transparent border border-gold text-gold font-bold uppercase tracking-wider rounded hover:bg-gold hover:text-navy transition-all disabled:opacity-50"
+                            >
+                                {isSubmitting ? <Loader2 className="animate-spin mx-auto" /> : "Text Me Quote"}
+                            </button>
                             <button
                                 onClick={() => handleSubmit('WHATSAPP')}
                                 disabled={isSubmitting}
-                                className="flex-1 h-[60px] cursor-pointer bg-white/0 hover:bg-white/5 rounded-full"
-                                title="WhatsApp"
-                            />
+                                className="flex-1 py-4 bg-gold text-navy font-bold uppercase tracking-wider rounded hover:bg-white transition-all shadow-lg shadow-gold/20 disabled:opacity-50"
+                            >
+                                {isSubmitting ? <Loader2 className="animate-spin mx-auto" /> : "WhatsApp"}
+                            </button>
                         </div>
                     </div>
-                )}
+                </div>
 
                 {/* Success Overlay */}
                 {submitSuccess && (
-                    <div className="absolute inset-0 z-50 bg-navy-950/95 flex flex-col items-center justify-center text-center p-8 animate-in zoom-in duration-300">
+                    <div className="absolute inset-0 z-50 bg-navy-950/98 flex flex-col items-center justify-center text-center p-8 animate-in zoom-in duration-300">
                         <div className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mb-6 shadow-2xl shadow-green-500/20">
                             <Check className="text-white w-10 h-10" strokeWidth={4} />
                         </div>
                         <h3 className="text-3xl font-serif text-white mb-2">Request Received!</h3>
                         <p className="text-white/60 max-w-md">
-                            We have received your project details. <br />
-                            Master Upholsterer <strong>Mike</strong> will review your photos and send you a preliminary quote shortly via <strong>{lastMethod === 'WHATSAPP' ? 'WhatsApp' : 'SMS'}</strong>.
+                            We are reviewing your request. <br />
+                            Expect a reply via <strong>{formData.phone}</strong> shortly.
                         </p>
                         <button
                             onClick={() => {
                                 setSubmitSuccess(false);
-                                setCurrentStep(1);
                                 setImages([]);
                                 setFormData({ name: "", zip: "", phone: "", desc: "" });
                             }}
@@ -308,11 +248,6 @@ export default function ProjectBoard() {
                         </button>
                     </div>
                 )}
-
-                {/* Debug Overlay */}
-                <div className="absolute top-4 left-4 bg-black/50 text-white text-xs px-2 py-1 rounded backdrop-blur-sm pointer-events-none z-50 opacity-0 group-hover:opacity-100 transition-opacity">
-                    Step {currentStep} | Uploaded: {images.length}
-                </div>
 
             </div>
         </section>
