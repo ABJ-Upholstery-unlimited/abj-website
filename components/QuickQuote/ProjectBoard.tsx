@@ -145,37 +145,37 @@ export default function ProjectBoard() {
                                                 id: 'Crypton',
                                                 label: 'Crypton\nFabric',
                                                 price: 'Average yardage\n$60-$80',
-                                                img: '/assets/quick_quote/fabric_crypton.jpg' // Using uploaded image
+                                                img: '/assets/quick_quote/Crypton.jpg'
                                             },
                                             {
                                                 id: 'Regular',
                                                 label: 'Regular\nFabric',
                                                 price: 'Average yardage\n$20-$60',
-                                                img: '/assets/quick_quote/fabric_regular.jpg' // Using uploaded image
+                                                img: '/assets/quick_quote/Regular_Fabric.jpg'
                                             },
                                             {
                                                 id: 'Synthetic',
                                                 label: 'Synthetic',
                                                 price: 'Average yardage\n$20-$50',
-                                                img: '/assets/quick_quote/fabric_crypton.jpg' // PLACEHOLDER (Reusing uploaded)
+                                                img: '/assets/quick_quote/Synthetic-Leather-Fabric.jpeg'
                                             },
                                             {
                                                 id: 'Leather',
                                                 label: 'Genuine\nLeather',
                                                 price: 'Average yardage\n$144-$252',
-                                                img: '/assets/quick_quote/fabric_regular.jpg' // PLACEHOLDER (Reusing uploaded)
+                                                img: '/assets/quick_quote/Genuine_Leather.jpg'
                                             },
                                             {
                                                 id: 'Client',
                                                 label: 'Client\nMaterial',
                                                 price: 'You provide\nthe fabric',
-                                                img: '/assets/quick_quote/fabric_crypton.jpg' // PLACEHOLDER
+                                                img: '/assets/quick_quote/Client_Material.jpg'
                                             },
                                             {
                                                 id: 'Other',
                                                 label: 'Other',
                                                 price: 'Unsure?',
-                                                img: null // No image for 'Other', or maybe a default gray?
+                                                img: null
                                             }
                                         ].map((item) => {
                                             const isSelected = fabricSelected === item.id;
