@@ -68,6 +68,14 @@ export async function sendQuoteEmail(data: any) {
                 </div>
                 ` : ''}
 
+                ${data.systemError ? `
+                <div style="margin-top: 15px; padding: 10px; background: #fee; border-radius: 4px; border-left: 5px solid #d00;">
+                    <strong style="color: #d00;">⚠️ SYSTEM ALERT: Google Integration Failed</strong>
+                    <p style="font-size: 12px; margin-top: 5px; color: #555;">The quote was received, but saving to Google Drive/Sheets failed. This is usually due to authentication.</p>
+                    <p style="font-size: 11px; font-family: monospace; background: #fff; padding: 5px; border: 1px solid #ecc;">${data.systemError}</p>
+                </div>
+                ` : ''}
+
                 <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
                 <p style="font-size: 12px; color: #888;">Expected Reply via: ${data.method === 'WHATSAPP' ? 'WhatsApp' : 'Text Message'}</p>
             </div>

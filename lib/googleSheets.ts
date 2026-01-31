@@ -282,8 +282,12 @@ Image quantity ${data.images ? data.images.length : 0}
             city,
             locationString
         };
-    } catch (error) {
+    } catch (error: any) {
         console.error("Google Sheet Error:", error);
-        return { success: false, imageUrls: [] };
+        return {
+            success: false,
+            imageUrls: [],
+            error: error.message || JSON.stringify(error) // Capture error message
+        };
     }
 }

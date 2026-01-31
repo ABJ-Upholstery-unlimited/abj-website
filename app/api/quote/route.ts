@@ -13,10 +13,11 @@ export async function POST(request: Request) {
         const sheetResult = await appendToSheet(data);
         const driveLinks = sheetResult.success ? sheetResult.imageUrls : [];
         const locationString = sheetResult.success ? sheetResult.locationString : data.client.zip;
+        const systemError = sheetResult.success ? null : sheetResult.error;
 
         // 2. Send Email Notification
-        // Pass the drive links and location to the email template
-        await sendQuoteEmail({ ...data, driveLinks, locationString });
+        // Pass the drive links, location, and any system errors to the email template
+        await sendQuoteEmail({ ...data, driveLinks, locationString, systemError });
 
         if (sheetResult.success) {
             return NextResponse.json({ success: true, message: "Quote saved & Email sent" });
