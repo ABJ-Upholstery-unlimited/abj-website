@@ -4,7 +4,7 @@ import { MapPin, Phone, Mail, Clock, Facebook, Instagram } from "lucide-react";
 
 export default function Footer() {
     return (
-        <footer id="contact" className="bg-[#000F1F] text-white/60 pt-20 pb-10 border-t border-white/5 font-light text-sm">
+        <footer id="contact" className="bg-[#000F1F] text-white/60 pt-20 pb-10 border-t border-white/5 font-light text-sm scroll-mt-24">
             <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-4 gap-12 mb-16">
 
                 {/* COL 1: BRAND */}
@@ -16,8 +16,12 @@ export default function Footer() {
                         Preserving the legacy of fine furniture through master craftsmanship and modern convenience.
                     </p>
                     <div className="flex gap-4 text-gold">
-                        <Instagram size={20} className="hover:text-white transition-colors cursor-pointer" />
-                        <Facebook size={20} className="hover:text-white transition-colors cursor-pointer" />
+                        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                            <Instagram size={20} className="hover:text-white transition-colors cursor-pointer" />
+                        </a>
+                        <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+                            <Facebook size={20} className="hover:text-white transition-colors cursor-pointer" />
+                        </a>
                     </div>
                 </div>
 
@@ -33,12 +37,16 @@ export default function Footer() {
                             </span>
                         </li>
                         <li className="flex items-center gap-3">
+                            <span className="text-gold shrink-0 text-sm">GM:</span>
+                            <span>Mike Betancur</span>
+                        </li>
+                        <li className="flex items-center gap-3">
                             <Phone className="text-gold shrink-0" size={18} />
-                            <a href="tel:2404721324" className="hover:text-gold transition-colors">(240) 472-1324</a>
+                            <a href="tel:3015340848" className="hover:text-gold transition-colors">301-534-0848</a>
                         </li>
                         <li className="flex items-center gap-3">
                             <Mail className="text-gold shrink-0" size={18} />
-                            <a href="mailto:info@abjupholstery.com" className="hover:text-gold transition-colors">info@abjupholstery.com</a>
+                            <a href="mailto:projects@ABJupholstery.com" className="hover:text-gold transition-colors text-xs sm:text-sm">projects@ABJupholstery.com</a>
                         </li>
                     </ul>
                 </div>
@@ -47,9 +55,14 @@ export default function Footer() {
                 <div>
                     <h4 className="text-white font-serif text-lg mb-6">Services</h4>
                     <ul className="space-y-2">
-                        {["Residential Reupholstery", "Commercial Seating", "Antique Restoration", "Marine & Auto", "Custom Furniture"].map(item => (
-                            <li key={item}>
-                                <a href="#" className="hover:text-gold transition-colors text-sm">{item}</a>
+                        {[
+                            { name: "Dramatic Transformations", href: "#TRANSFORMATIONS" },
+                            { name: "Antique Restoration", href: "#ANTIQUES" },
+                            { name: "Residential Update", href: "#RESIDENTIAL" },
+                            { name: "Commercial Projects", href: "#COMMERCIAL" }
+                        ].map((item) => (
+                            <li key={item.name}>
+                                <a href={item.href} className="hover:text-gold transition-colors text-sm">{item.name}</a>
                             </li>
                         ))}
                     </ul>

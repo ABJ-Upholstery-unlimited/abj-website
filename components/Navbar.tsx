@@ -58,6 +58,10 @@ export default function Navbar() {
                         </button>
                     ))}
 
+                    <a href="/wisdom" className="text-sm uppercase tracking-widest text-white/70 hover:text-gold transition-colors">
+                        Wisdom
+                    </a>
+
                     <a
                         href="#quote"
                         onClick={(e) => { e.preventDefault(); scrollToSection('quote'); }}
@@ -108,6 +112,12 @@ export default function Navbar() {
                             {item}
                         </button>
                     ))}
+                    <a
+                        href="/wisdom"
+                        className="text-2xl font-serif text-white hover:text-gold text-left border-b border-white/10 pb-4 transition-colors"
+                    >
+                        Wisdom
+                    </a>
                     <button
                         onClick={() => scrollToSection('quote')}
                         className="mt-4 w-full py-4 bg-gold text-navy font-bold text-lg uppercase tracking-wider rounded text-center active:scale-95 transition-transform"

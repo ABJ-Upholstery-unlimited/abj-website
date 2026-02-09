@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import clsx from "clsx";
 import { ArrowUpRight, X } from "lucide-react";
 import { PROJECTS, Project } from "@/app/data/projects";
@@ -14,8 +14,37 @@ const CATEGORIES = [
 ];
 
 export default function Gallery() {
-    const [activeFilter, setActiveFilter] = useState("all");
-    const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+    const [activeFilter, setActiveFilter] = useState("all"); // Renamed from selectedCategory to activeFilter to match existing logic
+    const [selectedProject, setSelectedProject] = useState<Project | null>(null); // Renamed from selectedImage to selectedProject to match existing logic
+
+    // Categories mapping for deep linking
+    const CATEGORY_MAP: Record<string, string> = {
+        'ALL PROJECTS': 'all',
+        'TRANSFORMATIONS': 'transformations',
+        'ANTIQUES': 'antique',
+        'RESIDENTIAL': 'residential',
+        'COMMERCIAL': 'commercial'
+    };
+
+    // Listen for hash changes to update filter
+    useEffect(() => {
+        const handleHashChange = () => {
+            const hash = window.location.hash.replace('#', '').toUpperCase();
+            const mappedCategory = CATEGORY_MAP[hash];
+            if (mappedCategory) {
+                setActiveFilter(mappedCategory); // Use setActiveFilter to update the filter state
+                // Scroll to gallery section if likely coming from footer
+                const element = document.getElementById("gallery");
+                if (element) element.scrollIntoView({ behavior: 'smooth' });
+            }
+        };
+
+        // Check on mount
+        handleHashChange();
+
+        window.addEventListener('hashchange', handleHashChange);
+        return () => window.removeEventListener('hashchange', handleHashChange);
+    }, []);
 
     const filteredItems = activeFilter === "all"
         ? PROJECTS

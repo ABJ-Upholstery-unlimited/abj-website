@@ -48,12 +48,12 @@ export default function Hero() {
                 <h1 className="text-6xl md:text-8xl font-serif text-white mb-6 drop-shadow-2xl animate-fade-in-up delay-100">
                     BETTER<br />THAN NEW.
                 </h1>
-                <p className="text-white/90 text-lg md:text-xl font-light max-w-2xl mx-auto leading-relaxed drop-shadow-md animate-fade-in-up delay-200">
+                <p className="text-white/90 text-lg md:text-xl font-light max-w-2xl mx-auto leading-relaxed drop-shadow-md animate-fade-in-up delay-200 mb-12">
                     We are experts at <span className="text-gold font-medium">fine restoration</span>; we will walk you through the process.
                 </p>
 
                 {/* SCROLL INDICATOR */}
-                <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce cursor-pointer opacity-80 hover:opacity-100 transition-opacity">
+                <div className="flex flex-col items-center gap-2 animate-bounce cursor-pointer opacity-80 hover:opacity-100 transition-opacity">
                     <a href="#quote" className="flex flex-col items-center gap-2">
                         <span className="text-[10px] uppercase tracking-widest text-white/80">Scroll</span>
                         <div className="w-[1px] h-16 bg-gradient-to-b from-gold via-white to-transparent"></div>

@@ -1,20 +1,25 @@
 import { Scissors, ShieldCheck, HeartHandshake } from "lucide-react";
+import Link from "next/link";
+import clsx from "clsx";
 
 const TIPS = [
     {
         icon: <Scissors size={32} />,
         title: "Fabric Selection",
         desc: "Why 'Double Rubs' matter more than color. Our guide to choosing textiles that last a lifetime.",
+        href: "/selecting_material"
     },
     {
         icon: <HeartHandshake size={32} />,
         title: "Repair vs. Buy New",
         desc: "Understanding the value of a solid frame. When is restoration the smarter financial choice?",
+        href: null
     },
     {
         icon: <ShieldCheck size={32} />,
         title: "Care & Maintenance",
         desc: "Pro secrets to keeping your velvet crushed-free and your leather supple for decades.",
+        href: null
     },
 ];
 
@@ -34,26 +39,41 @@ export default function Tips() {
                 </div>
 
                 <div className="grid md:grid-cols-3 gap-8">
-                    {TIPS.map((tip, idx) => (
-                        <div
-                            key={idx}
-                            className="bg-navy border-l-2 border-gold p-8 hover:bg-white/5 transition-all group cursor-pointer"
-                        >
-                            <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center text-gold mb-6 group-hover:scale-110 transition-transform">
-                                {tip.icon}
-                            </div>
-                            <h4 className="text-xl font-serif text-white mb-3 group-hover:text-gold transition-colors">
-                                {tip.title}
-                            </h4>
-                            <p className="text-white/50 text-sm leading-relaxed">
-                                {tip.desc}
-                            </p>
+                    {TIPS.map((tip, idx) => {
+                        const CardContent = (
+                            <div className={clsx(
+                                "h-full bg-navy border-l-2 border-gold p-8 transition-all group",
+                                tip.href ? "hover:bg-white/10 hover:shadow-2xl hover:scale-105 cursor-pointer" : "hover:bg-white/5 cursor-default"
+                            )}>
+                                <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center text-gold mb-6 group-hover:scale-110 transition-transform">
+                                    {tip.icon}
+                                </div>
+                                <h4 className="text-xl font-serif text-white mb-3 group-hover:text-gold transition-colors">
+                                    {tip.title}
+                                </h4>
+                                <p className="text-white/50 text-sm leading-relaxed">
+                                    {tip.desc}
+                                </p>
 
-                            <div className="mt-6 flex items-center gap-2 text-gold text-xs uppercase tracking-widest font-bold opacity-0 group-hover:opacity-100 transition-all transform translate-y-2 group-hover:translate-y-0">
-                                Read Guide <span>→</span>
+                                <div className={clsx(
+                                    "mt-6 flex items-center gap-2 text-gold text-xs uppercase tracking-widest font-bold transition-all transform",
+                                    "opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0"
+                                )}>
+                                    {tip.href ? "Read Guide" : "Learn More"} <span>→</span>
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        );
+
+                        return tip.href ? (
+                            <Link key={idx} href={tip.href} className="block h-full">
+                                {CardContent}
+                            </Link>
+                        ) : (
+                            <div key={idx} className="block h-full">
+                                {CardContent}
+                            </div>
+                        );
+                    })}
                 </div>
             </div>
         </section>

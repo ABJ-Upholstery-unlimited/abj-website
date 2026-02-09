@@ -323,12 +323,12 @@ export default function ProjectBoard() {
 
                         {/* --- SUCCESS MESSAGE LOCATION (Inline) --- */}
                         {submitSuccess && (
-                            <div className="mt-4 flex flex-col items-center animate-in fade-in slide-in-from-bottom-2">
-                                <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mb-2 shadow-lg shadow-green-500/20">
-                                    <Check className="text-white w-6 h-6" strokeWidth={4} />
+                            <div className="flex-1 flex flex-col items-center justify-center animate-in fade-in slide-in-from-bottom-2 min-h-[300px]">
+                                <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mb-6 shadow-[0_0_20px_rgba(34,197,94,0.4)] animate-bounce">
+                                    <Check className="text-white w-8 h-8" strokeWidth={4} />
                                 </div>
-                                <h3 className="text-xl font-serif text-white">Request Received!</h3>
-                                <p className="text-white/60 text-sm text-center max-w-xs mt-2">
+                                <h3 className="text-2xl font-serif text-white mb-2">Request Received!</h3>
+                                <p className="text-white/60 text-sm text-center max-w-xs mb-8">
                                     Expect a reply via <span className="text-white font-medium">300-400-4503</span> shortly.
                                 </p>
                                 <button
@@ -337,7 +337,7 @@ export default function ProjectBoard() {
                                         setImages([]);
                                         setFormData({ name: "", zip: "", phone: "", desc: "" });
                                     }}
-                                    className="mt-2 text-gold hover:text-white text-[10px] underline underline-offset-2"
+                                    className="px-6 py-2 border border-gold/30 rounded-full text-gold hover:text-white hover:bg-gold/10 transition-all text-xs uppercase tracking-widest"
                                 >
                                     Start Another Project
                                 </button>
