@@ -23,72 +23,72 @@ export const MATERIALS: Material[] = [
         name: 'Performance Velvet',
         sample: '/assets/materials/velvet_sample.png',
         showcase: '/assets/materials/velvet_sample_showcase.png',
-        desc: 'The softness of silk with the durability of steel. Our most popular choice for families.',
+        desc: 'A chic statement piece that feels as good as it looks. Soft, durable, and undeniably elegant.',
         usage: 'High traffic family rooms',
         durability: 'High (100,000+ double rubs)',
         care: 'Water-based cleaners (W)',
         price: '$50 - $80',
-        vibe: 'Resilience'
+        vibe: 'Chic'
     },
     {
         id: 'leather',
         name: 'Full-Grain Leather',
         sample: '/assets/materials/leather_sample.png',
         showcase: '/assets/materials/leather_sample_showcase.png',
-        desc: 'A living material that gets better with age. Authentic, breathable, and timeless.',
+        desc: 'The epitome of sophistication. Rich, authentic leather that develops a unique patina over time.',
         usage: 'Statement Chairs & Lobbies',
         durability: 'High (Lifetime Durability)',
         care: 'Condition biannually',
         price: '$144 - $252',
-        vibe: 'Timeless'
+        vibe: 'Sophisticated'
     },
     {
         id: 'linen',
         name: 'Belgian Linen',
         sample: '/assets/materials/linen_sample.png',
         showcase: '/assets/materials/linen_sample_showcase.png',
-        desc: 'Naturally cooling and antimicrobial. The choice for a relaxed, sophisticated aesthetic.',
+        desc: 'Effortlessly laid-back luxury. Adds a relaxed, organic texture that breathes life into any room.',
         usage: 'Formal Sitting Areas',
         durability: 'Medium (15,000 double rubs)',
         care: 'Solvent cleaner (S) / Pro',
-        price: '$20 - '$40',
-        vibe: 'Sophisticated'
+        price: '$20 - $40',
+        vibe: 'Laid-back'
     },
     {
         id: 'boucle',
         name: 'Teddy Bouclé',
         sample: '/assets/materials/boucle_sample.png',
         showcase: '/assets/materials/boucle_sample_showcase.png',
-        desc: 'Highly textured and cozy. Adds instant dimension and warmth to modern frames.',
+        desc: 'An artistic choice for the bold. Sculptural texture that turns furniture into modern art.',
         usage: 'Curved Furniture & Accents',
         durability: 'Medium (30,000+ double rubs)',
         care: 'Vacuum regularly / Spot clean',
-        price: '$40 - '$80',
-        vibe: 'Chic'
+        price: '$40 - $80',
+        vibe: 'Artistic'
     },
     {
         id: 'crypton',
         name: 'Crypton Tech',
         sample: '/assets/materials/crypton_sample.png',
         showcase: '/assets/materials/crypton_sample_showcase.png',
-        desc: 'The gold standard in stain resistance. Liquid beads up and rolls off.',
+        desc: 'Truly life-proof. Engineered to withstand spills, pets, and play without sacrificing style.',
         usage: 'Dining Chairs & Kids Rooms',
         durability: 'High (50,000+ double rubs)',
         care: 'Bleach cleanable (Ratio 1:10)',
-        price: '$60 - '$80',
-        vibe: 'Invincible'
+        price: '$60 - $80',
+        vibe: 'Life-proof'
     },
     {
         id: 'pattern',
         name: 'Heirloom Damask',
         sample: '/assets/materials/pattern_sample.png',
         showcase: '/assets/materials/pattern_sample_showcase.png',
-        desc: 'Traditional woven patterns that hide wear and define an era.',
+        desc: 'A vintage soul. Intricate woven patterns that bring timeless heritage and character to your space.',
         usage: 'Antique Frames & Formal',
         durability: 'Medium (15,000 - 30,000 rubs)',
         care: 'Professional clean only',
-        price: '$40 - '$60',
-        vibe: 'Heritage'
+        price: '$40 - $60',
+        vibe: 'Vintage'
     }
 ];
 
@@ -121,7 +121,7 @@ export default function MaterialShowcase() {
                                     alt={mat.name}
                                     className={clsx(
                                         "w-full h-full object-cover transition-all duration-700 ease-out",
-                                        hoveredId === mat.id ? "scale-105" : "scale-100"
+                                        "scale-100"
                                     )}
                                 />
 
