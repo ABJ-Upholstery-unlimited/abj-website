@@ -1,92 +1,67 @@
-const { JWT } = require('google-auth-library');
-const creds = require('./google-key.json');
+const { GoogleAuth } = require('google-auth-library');
+const fs = require('fs');
+const path = require('path');
 
-const PARENT_FOLDER_ID = "1XBEQolgIN8R8RgVUj1XVIoOBw6ih7yff";
+// CONFIG
+const KEY_FILE = 'service-account.json';
+const PARENT_FOLDER_ID = "1XBEQolgIN8R8RgVUj1XVIoOBw6ih7yff"; // QUICK_QUOTE verified ID
 
 async function testDrive() {
-    console.log("1. Authenticating...");
-    const client = new JWT({
-        email: creds.client_email,
-        key: creds.private_key,
-        scopes: ['https://www.googleapis.com/auth/drive'],
-    });
+    console.log("\n🧪 STARTING SERVICE ACCOUNT DIAGNOSTIC...\n");
 
+    // 1. Check Key File
+    const keyPath = path.join(process.cwd(), KEY_FILE);
+    if (!fs.existsSync(keyPath)) {
+        console.error("❌ CRITICAL ERROR: '" + KEY_FILE + "' not found in this folder!");
+        console.error("   Current Folder: " + process.cwd());
+        console.error("   Please move the JSON key file here.");
+        return;
+    }
+    console.log("✅ Key File Found: " + KEY_FILE);
+
+    // 2. Authenticate
+    console.log("🔄 Authenticating...");
     try {
-        const tokenVal = await client.getAccessToken();
-        const token = tokenVal.token;
-        console.log("   ✅ Auth Successful");
+        const auth = new GoogleAuth({
+            keyFile: keyPath,
+            scopes: ['https://www.googleapis.com/auth/drive'],
+        });
+        const client = await auth.getClient();
+        console.log("✅ Authentication Successful! (The Robot is awake)");
 
-        const folderName = "Test Mike05_3015451133_20871";
-        console.log("2. Creating Subfolder '" + folderName + "' in " + PARENT_FOLDER_ID + "...");
+        // 3. Test Folder Access
+        console.log("🔄 Testing Access to QUICK_QUOTE Folder...");
+        const folderName = "TEST_ACCESS_" + Date.now();
         const meta = {
             name: folderName,
             mimeType: "application/vnd.google-apps.folder",
             parents: [PARENT_FOLDER_ID]
         };
 
-        const folderRes = await fetch('https://www.googleapis.com/drive/v3/files', {
+        const res = await client.request({
+            url: 'https://www.googleapis.com/drive/v3/files',
             method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(meta)
+            data: meta
         });
 
-        const folderJson = await folderRes.json();
-
-        if (folderJson.error) {
-            console.error("❌ Folder Creation Error:", JSON.stringify(folderJson.error, null, 2));
-            return;
-        }
-
-        console.log("✅ Folder Created! ID:", folderJson.id);
-        const subFolderId = folderJson.id;
-
-        console.log("3. Uploading Image to New Folder...");
-        const boundary = '-------314159265358979323846';
-        const delimiter = "\r\n--" + boundary + "\r\n";
-        const close_delim = "\r\n--" + boundary + "--";
-
-        // 1x1 Pixel GIF Base64
-        const base64Image = "R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
-
-        const multipartRequestBody =
-            delimiter +
-            "Content-Type: application/json\r\n\r\n" +
-            JSON.stringify({
-                name: "TEST_IMG_IN_SUBFOLDER.gif",
-                parents: [subFolderId]
-            }) +
-            delimiter +
-            "Content-Type: image/gif\r\n" +
-            "Content-Transfer-Encoding: base64\r\n" +
-            "\r\n" +
-            base64Image +
-            close_delim;
-
-        const res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': `multipart/related; boundary=${boundary}`
-            },
-            body: multipartRequestBody
-        });
-
-        const json = await res.json();
-
-        if (json.error) {
-            console.error("❌ Upload Error:", JSON.stringify(json.error, null, 2));
-        } else {
-            console.log("✅ Upload Successful! ID:", json.id);
-            console.log("   Name:", json.name);
-
-            // Cleanup? No, let user see it as proof.
-        }
+        console.log("✅ SUCCESS! Created Test Folder inside QUICK_QUOTE.");
+        console.log("   Folder ID: " + res.data.id);
+        console.log("\n🎉 GREAT NEWS: The Service Account is working perfectly.");
+        console.log("   now you can restart 'npm run dev' and it will works.");
 
     } catch (e) {
-        console.error("❌ Crash:", e);
+        console.error("\n❌ AUTHENTICATION FAILED.");
+        console.error("   Error details:", e.message);
+        if (e.message.includes("invalid_grant")) {
+            console.error("   Reason: The System Time might be wrong OR the Key is revoked.");
+        }
+        if (e.message.includes("insufficient permissions") || e.code === 403) {
+            console.error("   Reason: The Robot does NOT have permission to view the folder.");
+            console.error("   FIX: Share 'QUICK_QUOTE' with the robot email again.");
+        }
+        if (e.message.includes("File not found")) {
+            console.error("   Reason: The Folder ID '1XBEQ...' does not exist or is invisible.");
+        }
     }
 }
 

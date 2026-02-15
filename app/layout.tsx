@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Analytics from "@/components/Analytics";
+import WhatsAppButton from "@/components/WhatsAppButton";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -30,6 +31,7 @@ export default function RootLayout({
       >
         {children}
         <Analytics />
+        <WhatsAppButton />
       </body>
     </html>
   );

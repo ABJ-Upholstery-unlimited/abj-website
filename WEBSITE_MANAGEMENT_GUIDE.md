@@ -108,3 +108,92 @@ I have created a special "Magic Button" script for you.
 5. Wait 2 minutes. Your live website is now updated.
 
 > **Note:** You do NOT need to type code commands to update the site anymore. Just double-click `deploy_updates.bat`.
+
+---
+
+## 6. Updating Contact Information (WhatsApp/Phone)
+
+The phone number and WhatsApp connection are set in the code.
+
+**To Update the Phone Number (300-400-4503):**
+
+1. Search your project for "300-400-4503" (in `layout.tsx` or `Footer.tsx`).
+2. Replace it carefully.
+
+**To Update the WhatsApp Number:**
+
+1. Open `components/QuickQuote/ProjectBoard.tsx`.
+2. Search for `handleWhatsApp`.
+3. You will see a link starting with `https://wa.me/13004004503`.
+4. Change the number. **Important:** It must start with `1` (country code) and have no dashes `13014004503`.
+
+---
+
+## 7. Updating "Tips" & "Reviews"
+
+These are usually hardcoded in the main page.
+
+1. Open `app/page.tsx`.
+2. Search for the specific review text or tip title you want to change.
+3. Edit the text inside the quotes or tags.
+4. Save.
+
+---
+
+## 8. 🚨 FIXING AUTH (The "Unbreakable" Connection)
+
+If you see "Invalid Grant" or "System Error: Google Integration Failed", your personal login token has expired.
+To fix this **FOREVER**, we use a **Service Account** (Robot Account).
+
+### Step 1: Create the Robot Account
+
+1. Go to **[Google Cloud Console](https://console.cloud.google.com/)**.
+2. Select your project (e.g., "ABJ Quote Tool").
+3. Search for **Service Accounts**.
+4. Click **+ CREATE SERVICE ACCOUNT**.
+5. **Name:** `abj-website-bot`. Click **Create & Continue**.
+6. **Role:** Select `Editor` (or `Drive File Editor` and `Sheets Editor`). Click **Continue** -> **Done**.
+
+### Step 2: Get the Key (JSON File)
+
+1. Click on the new email address created (`abj-website-bot@...`).
+2. Go to the **KEYS** tab.
+3. Click **ADD KEY** -> **Create new key**.
+4. Select **JSON**. Click **CREATE**.
+5. A file will download. **Rename it to:** `service-account.json`.
+
+### Step 3: Install the Key
+
+1. Move `service-account.json` into your project folder:
+   `C:\Users\ADMIN\.gemini\antigravity\scratch\ABJ Upholstery unlimited\abj-website\`
+   (Right next to `package.json` and `google-oauth.json`).
+
+### Step 4: Grant Permission (CRITICAL)
+
+The robot account needs permission to touch your folders. You need its special email address.
+
+**How to find the Robot's Email:**
+
+* **Option A (Console):** Look at the list where you created the key. The email is in the column labeled **"Email"** (e.g., `abj-quote-bot@...`).
+    It usually ends in `.iam.gserviceaccount.com`.
+* **Option B (JSON File):** Open the `service-account.json` file you just downloaded. Look for `client_email`.
+
+**The Steps:**
+
+1. Copy that email address.
+2. Go to your **Google Drive**.
+3. Right-click the folder where Quotes are saved ("ABJ Smart Quotes").
+4. Click **Share**.
+5. Paste the robot's email.
+6. Make sure it says **Editor**. Uncheck "Notify people" if you want.
+7. Click **Share**.
+8. **Repeat** this for your Google Sheet ("ABJ Quotes").
+
+### Step 5: Connect the Folder ID
+
+**✅ VERIFIED:**
+Your "QUICK_QUOTE" folder ID is: `1XBEQolgIN8R8RgVUj1XVIoOBw6ih7yff`
+
+This ID is already programmed into the system. You do not need to do anything here.
+
+**✅ Done!** The system will now detect `service-account.json` and use it. It will never expire.

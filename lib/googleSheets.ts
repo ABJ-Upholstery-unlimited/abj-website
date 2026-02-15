@@ -1,5 +1,5 @@
 import { GoogleSpreadsheet } from 'google-spreadsheet';
-import { UserRefreshClient } from 'google-auth-library';
+import { UserRefreshClient, GoogleAuth } from 'google-auth-library';
 import fs from 'fs';
 import path from 'path';
 
@@ -7,35 +7,85 @@ import path from 'path';
 const SPREADSHEET_ID = "1ihkfuvqEaNmsz0ksyw3EOJKB6tz_43cbyVGEMS-AYyQ"; // ABJ Quotes
 const SHEET_TITLE = "QUOTE RAW DATA";
 
-// Credential Loading (Env Vars -> Local File)
-let creds: any = {
+// Credential Loading
+// Priority 1: Service Account (Unbreakable)
+// Priority 2: Env Vars (User Auth)
+// Priority 3: google-oauth.json (User Auth - Dev/Test)
+
+let serviceAccountCreds: any = null;
+let userCreds: any = {
     client_id: process.env.GOOGLE_CLIENT_ID,
     client_secret: process.env.GOOGLE_CLIENT_SECRET,
     refresh_token: process.env.GOOGLE_REFRESH_TOKEN,
     parent_folder_id: process.env.GOOGLE_PARENT_FOLDER_ID
 };
 
-try {
-    if (!creds.client_id) {
-        const filePath = path.join(process.cwd(), 'google-oauth.json');
-        if (fs.existsSync(filePath)) {
-            const fileContent = fs.readFileSync(filePath, 'utf-8');
-            creds = JSON.parse(fileContent);
-        }
+// Check for Service Account File
+// Check for Service Account File
+const serviceAccountPath = path.join(process.cwd(), 'service-account.json');
+console.log("🔍 [DEBUG] Current Directory:", process.cwd());
+console.log("🔍 [DEBUG] Looking for Key at:", serviceAccountPath);
+
+if (fs.existsSync(serviceAccountPath)) {
+    try {
+        serviceAccountCreds = JSON.parse(fs.readFileSync(serviceAccountPath, 'utf-8'));
+        console.log("✅ [DEBUG] Service Account File FOUND and PARSED.");
+    } catch (e) {
+        console.error("❌ [DEBUG] Service Account File Invalid JSON:", e);
     }
-} catch (e) {
-    console.warn("No credentials found in Env or local file.");
+} else {
+    console.warn("⚠️ [DEBUG] Service Account File NOT FOUND at expected path.");
 }
 
-const PARENT_FOLDER_ID = creds.parent_folder_id;
+// Check for User Auth File if no Env Vars
+if (!userCreds.client_id) {
+    const oauthPath = path.join(process.cwd(), 'google-oauth.json');
+    if (fs.existsSync(oauthPath)) {
+        try {
+            const fileContent = fs.readFileSync(oauthPath, 'utf-8');
+            userCreds = JSON.parse(fileContent);
+        } catch (e) {
+            console.warn("⚠️ Invalid google-oauth.json");
+        }
+    }
+}
+
+// Parent Folder ID logic
+const PARENT_FOLDER_ID = process.env.GOOGLE_PARENT_FOLDER_ID ||
+    (serviceAccountCreds ? "1XBEQolgIN8R8RgVUj1XVIoOBw6ih7yff" : userCreds.parent_folder_id);
+// Hardcoded fallback for SA if not in env, based on previous file content
 
 // Helper: Get OAuth Client
-function getClient() {
-    return new UserRefreshClient(
-        creds.client_id,
-        creds.client_secret,
-        creds.refresh_token
-    );
+async function getClient() {
+    // 1. Service Account (Preferred)
+    if (serviceAccountCreds) {
+        console.log("🔑 [DEBUG] Attempting to authenticate with Service Account...");
+        const auth = new GoogleAuth({
+            keyFile: serviceAccountPath,
+            scopes: [
+                'https://www.googleapis.com/auth/spreadsheets',
+                'https://www.googleapis.com/auth/drive',
+                'https://www.googleapis.com/auth/drive.file'
+            ]
+        });
+        return await auth.getClient();
+    } else {
+        console.error("❌ [DEBUG] serviceAccountCreds is NULL. Cannot use Robot Account.");
+    }
+
+
+    // 2. User Refresh Client (Legacy / Dev)
+    if (userCreds.client_id && userCreds.refresh_token) {
+        console.log("⚠️ [DEBUG] Using Legacy Refresh Token (Service Account unavailable or disabled)");
+        return new UserRefreshClient(
+            userCreds.client_id,
+            userCreds.client_secret,
+            userCreds.refresh_token
+        );
+    }
+
+
+    throw new Error("No valid Google Credentials found. Service Account missing or invalid.");
 }
 
 // Helper: Create Subfolder
@@ -174,10 +224,10 @@ async function uploadToDrive(base64Data: string, filename: string, folderId: str
 
 export async function appendToSheet(data: any) {
     try {
-        const oauthClient = getClient();
+        const oauthClient = await getClient();
 
         // 1. Initialize Sheet with OAuth
-        const doc = new GoogleSpreadsheet(SPREADSHEET_ID, oauthClient);
+        const doc = new GoogleSpreadsheet(SPREADSHEET_ID, oauthClient as any);
 
         // 2. Connect
         await doc.loadInfo();
@@ -253,24 +303,33 @@ Image quantity ${data.images ? data.images.length : 0}
             Fabric: data.fabric || 'None'
         };
 
-        // Add Images to Columns (Image 1 ... Image 10)
+        // Add Images to Columns (Image 1 ... Image 10) AND Image Links
         imageUrls.forEach((url, index) => {
             if (index < 10) {
                 // Hack: replace s220 with s1600 for larger preview
                 const largeUrl = url.replace(/=s\d+/, "=s1600");
                 rowData[`Image ${index + 1}`] = `=IMAGE("${largeUrl}")`;
+                rowData[`Image Link ${index + 1}`] = largeUrl; // RAW URL for Excel
             }
         });
 
         // Ensure headers exist if needed
         await sheet.loadHeaderRow();
         const headers = ['Date', 'Name', 'Phone', 'City', 'State', 'Zip', 'Description', 'Method', 'Fabric'];
-        for (let i = 1; i <= 10; i++) headers.push(`Image ${i}`);
+        for (let i = 1; i <= 10; i++) {
+            headers.push(`Image ${i}`);
+            headers.push(`Image Link ${i}`);
+        }
 
         // Update headers if there are new columns or length mismatch
-        // Note: This might shift existing data visually if columns are inserted in middle, 
-        // but 'addRow' maps by header name so new rows will be correct.
-        if (sheet.headerValues.length < headers.length || !sheet.headerValues.includes('City')) {
+        if (sheet.headerValues.length < headers.length || !sheet.headerValues.includes('Image Link 1')) {
+
+            // CRITICAL FIX: Ensure the sheet has enough columns (Grid Resize)
+            // Default new sheet is often 26 columns (A-Z). We now need ~29.
+            if (sheet.columnCount < headers.length) {
+                await sheet.resize({ rowCount: sheet.rowCount, columnCount: headers.length + 5 });
+            }
+
             await sheet.setHeaderRow(headers);
         }
 

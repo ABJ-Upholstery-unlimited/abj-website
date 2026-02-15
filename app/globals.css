@@ -28,8 +28,7 @@
 
 html {
   scroll-behavior: smooth;
-  scroll-snap-type: y mandatory;
-  scroll-padding-top: 100px;
+  /* scroll-snap-type removed to fix footer accessibility */
   /* Offset for Sticky Navbar */
 }
 
@@ -40,10 +39,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Scroll Snap Sections */
-section {
-  scroll-snap-align: start;
-}
+
 
 /* 3D Flip Utilities */
 .perspective-1000 {
