@@ -14,6 +14,7 @@ export type Material = {
     durability: string;
     care: string;
     price: string;
+    vibe: string;        // New property for "Moment" title
 };
 
 export const MATERIALS: Material[] = [
@@ -26,7 +27,8 @@ export const MATERIALS: Material[] = [
         usage: 'High traffic family rooms',
         durability: 'High (100,000+ double rubs)',
         care: 'Water-based cleaners (W)',
-        price: '$50 - $80'
+        price: '$50 - $80',
+        vibe: 'Resilience'
     },
     {
         id: 'leather',
@@ -37,7 +39,8 @@ export const MATERIALS: Material[] = [
         usage: 'Statement Chairs & Lobbies',
         durability: 'High (Lifetime Durability)',
         care: 'Condition biannually',
-        price: '$144 - $252'
+        price: '$144 - $252',
+        vibe: 'Timeless'
     },
     {
         id: 'linen',
@@ -48,7 +51,8 @@ export const MATERIALS: Material[] = [
         usage: 'Formal Sitting Areas',
         durability: 'Medium (15,000 double rubs)',
         care: 'Solvent cleaner (S) / Pro',
-        price: '$20 - $40'
+        price: '$20 - '$40',
+        vibe: 'Sophisticated'
     },
     {
         id: 'boucle',
@@ -59,7 +63,8 @@ export const MATERIALS: Material[] = [
         usage: 'Curved Furniture & Accents',
         durability: 'Medium (30,000+ double rubs)',
         care: 'Vacuum regularly / Spot clean',
-        price: '$40 - $80'
+        price: '$40 - '$80',
+        vibe: 'Chic'
     },
     {
         id: 'crypton',
@@ -70,7 +75,8 @@ export const MATERIALS: Material[] = [
         usage: 'Dining Chairs & Kids Rooms',
         durability: 'High (50,000+ double rubs)',
         care: 'Bleach cleanable (Ratio 1:10)',
-        price: '$60 - $80'
+        price: '$60 - '$80',
+        vibe: 'Invincible'
     },
     {
         id: 'pattern',
@@ -81,25 +87,14 @@ export const MATERIALS: Material[] = [
         usage: 'Antique Frames & Formal',
         durability: 'Medium (15,000 - 30,000 rubs)',
         care: 'Professional clean only',
-        price: '$40 - $60'
+        price: '$40 - '$60',
+        vibe: 'Heritage'
     }
 ];
 
 export default function MaterialShowcase() {
     const [flippedId, setFlippedId] = useState<string | null>(null);
     const [hoveredId, setHoveredId] = useState<string | null>(null);
-    const [mousePos, setMousePos] = useState({ x: 50, y: 50 });
-
-    // Only track mouse if NOT flipped (for front parallax) 
-    // OR if flipped (for back parallax if we want it? User didn't ask for back parallax, just "Mouse over: sample image zoom")
-    // Let's keep tracking always for simplicity, but only apply effect based on side.
-    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>, id: string) => {
-        if (hoveredId !== id) return;
-        const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
-        const x = ((e.clientX - left) / width) * 100;
-        const y = ((e.clientY - top) / height) * 100;
-        setMousePos({ x, y });
-    };
 
     return (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 perspective-1000">
@@ -109,7 +104,6 @@ export default function MaterialShowcase() {
                     className="relative h-[400px] w-full group cursor-pointer"
                     onMouseEnter={() => setHoveredId(mat.id)}
                     onMouseLeave={() => setHoveredId(null)}
-                    onMouseMove={(e) => handleMouseMove(e, mat.id)}
                     onClick={() => setFlippedId(flippedId === mat.id ? null : mat.id)}
                 >
                     <div className={clsx(
@@ -117,42 +111,44 @@ export default function MaterialShowcase() {
                         flippedId === mat.id ? "rotate-y-180" : ""
                     )}>
 
-                        {/* FRONT FACE: Showcase Image (Lifestyle) + Parallax Zoom Hover */}
+                        {/* FRONT FACE: Showcase Image (Lifestyle) + Mood Title */}
                         <div className="absolute inset-0 backface-hidden rounded-xl overflow-hidden bg-black border border-white/10 group-hover:border-gold/50 transition-colors">
                             <div className="h-full w-full relative flex items-center justify-center bg-black overflow-hidden">
 
-                                {/* Static Showcase Image (Default) */}
+                                {/* Static Showcase Image (Zooms slightly on hover) */}
                                 <img
                                     src={mat.showcase}
                                     alt={mat.name}
                                     className={clsx(
-                                        "w-full h-full object-cover transition-all duration-500",
-                                        hoveredId === mat.id ? "scale-110 opacity-50" : "scale-100 opacity-100"
+                                        "w-full h-full object-cover transition-all duration-700 ease-out",
+                                        hoveredId === mat.id ? "scale-105" : "scale-100"
                                     )}
                                 />
 
-                                {/* Parallax Zoom Lens Effect (Hover) */}
-                                {hoveredId === mat.id && (
-                                    <div
-                                        className="absolute inset-0 bg-no-repeat transition-all duration-100 ease-out"
-                                        style={{
-                                            backgroundImage: `url(${mat.showcase})`,
-                                            backgroundSize: '140%', // Less zoom for lifestyle
-                                            backgroundPosition: `${mousePos.x}% ${mousePos.y}%`
-                                        }}
-                                    >
-                                        <div className="absolute inset-0 bg-black/20 flex flex-col items-center justify-center pointer-events-none">
-                                            <div className="bg-black/60 text-white px-5 py-2 rounded-full backdrop-blur-md border border-white/20 flex items-center gap-3 shadow-xl animate-in fade-in zoom-in duration-300">
-                                                <ZoomIn size={18} className="text-gold" />
-                                                <span className="text-xs font-bold uppercase tracking-widest">Click for details</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                )}
-
+                                {/* Dark Overlay for Text Contrast (Appears on Hover) */}
                                 <div className={clsx(
-                                    "absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/90 to-transparent transition-opacity duration-300",
-                                    hoveredId === mat.id ? "opacity-0" : "opacity-100"
+                                    "absolute inset-0 bg-black/60 transition-opacity duration-500",
+                                    hoveredId === mat.id ? "opacity-100" : "opacity-0"
+                                )} />
+
+                                {/* "Moment" Title Overlay (Appears on Hover) */}
+                                <div className={clsx(
+                                    "absolute inset-0 flex flex-col items-center justify-center transition-all duration-500",
+                                    hoveredId === mat.id ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+                                )}>
+                                    <span className="text-gold text-xs font-bold uppercase tracking-[0.3em] mb-2 animate-in fade-in slide-in-from-bottom-2">The Mood</span>
+                                    <h2 className="text-4xl md:text-5xl font-serif italic text-white drop-shadow-lg scale-y-110">
+                                        {mat.vibe}
+                                    </h2>
+                                    <div className="mt-6 px-4 py-2 border border-white/30 rounded-full text-white/80 text-[10px] uppercase tracking-widest backdrop-blur-sm">
+                                        Click to Explore
+                                    </div>
+                                </div>
+
+                                {/* Default Title (Disappears on Hover) */}
+                                <div className={clsx(
+                                    "absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/90 to-transparent transition-all duration-300",
+                                    hoveredId === mat.id ? "opacity-0 translate-y-4" : "opacity-100 translate-y-0"
                                 )}>
                                     <h3 className="text-2xl font-serif text-white">{mat.name}</h3>
                                 </div>
@@ -206,7 +202,7 @@ export default function MaterialShowcase() {
                                 </div>
 
                                 <div className="w-full py-3 bg-navy text-white text-center rounded font-bold uppercase text-xs tracking-widest mt-4 hover:bg-gold hover:text-navy transition-colors">
-                                    Click to Flip Back
+                                    Return to Collection
                                 </div>
                             </div>
                         </div>
