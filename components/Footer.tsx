@@ -1,15 +1,27 @@
 "use client";
 
 import { MapPin, Phone, Mail, Clock, Facebook, Instagram } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
 
 export default function Footer() {
+    const pathname = usePathname();
+    const router = useRouter();
+
+    const handleLogoClick = () => {
+        if (pathname === '/') {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+            router.push('/');
+        }
+    };
+
     return (
         <footer id="contact" className="bg-[#000F1F] text-white/60 pt-20 pb-10 border-t border-white/5 font-light text-sm scroll-mt-24">
             <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-4 gap-12 mb-16">
 
                 {/* COL 1: BRAND */}
                 <div>
-                    <div className="mb-6 cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+                    <div className="mb-6 cursor-pointer" onClick={handleLogoClick}>
                         <img src="/assets/brand/abj-icon-white.png" alt="ABJ" className="w-16 h-16 object-contain opacity-80 hover:opacity-100 transition-opacity" />
                     </div>
                     <p className="mb-6 leading-relaxed">
