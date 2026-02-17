@@ -7,6 +7,17 @@ export default function Footer() {
     const pathname = usePathname();
     const router = useRouter();
 
+    const handleNavigation = (targetId: string) => {
+        if (pathname === '/') {
+            const element = document.getElementById(targetId);
+            if (element) {
+                element.scrollIntoView({ behavior: "smooth" });
+            }
+        } else {
+            router.push(`/#${targetId}`);
+        }
+    };
+
     const handleLogoClick = () => {
         if (pathname === '/') {
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -68,13 +79,18 @@ export default function Footer() {
                     <h4 className="text-white font-serif text-lg mb-6">Services</h4>
                     <ul className="space-y-2">
                         {[
-                            { name: "Dramatic Transformations", href: "#TRANSFORMATIONS" },
-                            { name: "Antique Restoration", href: "#ANTIQUES" },
-                            { name: "Residential Update", href: "#RESIDENTIAL" },
-                            { name: "Commercial Projects", href: "#COMMERCIAL" }
+                            { name: "Dramatic Transformations", id: "gallery" },
+                            { name: "Antique Restoration", id: "gallery" },
+                            { name: "Residential Update", id: "gallery" },
+                            { name: "Commercial Projects", id: "gallery" }
                         ].map((item) => (
                             <li key={item.name}>
-                                <a href={item.href} className="hover:text-gold transition-colors text-sm">{item.name}</a>
+                                <button
+                                    onClick={() => handleNavigation(item.id)}
+                                    className="hover:text-gold transition-colors text-sm text-left"
+                                >
+                                    {item.name}
+                                </button>
                             </li>
                         ))}
                     </ul>

@@ -98,7 +98,7 @@ export default function Navbar() {
             {/* OVERLAY BACKDROP */}
             {isMobileMenuOpen && (
                 <div
-                    className="fixed inset-0 bg-black/60 z-40 backdrop-blur-sm md:hidden animate-in fade-in duration-300"
+                    className="fixed inset-0 bg-black/60 z-40 backdrop-blur-sm md:hidden"
                     onClick={() => setIsMobileMenuOpen(false)}
                 />
             )}
