@@ -12,6 +12,9 @@ export default function Footer() {
             const element = document.getElementById(targetId);
             if (element) {
                 element.scrollIntoView({ behavior: "smooth" });
+            } else {
+                // If element not found (e.g. it's a filter hash like "TRANSFORMATIONS"), update hash
+                window.location.hash = targetId;
             }
         } else {
             router.push(`/#${targetId}`);
@@ -79,10 +82,10 @@ export default function Footer() {
                     <h4 className="text-white font-serif text-lg mb-6">Services</h4>
                     <ul className="space-y-2">
                         {[
-                            { name: "Dramatic Transformations", id: "gallery" },
-                            { name: "Antique Restoration", id: "gallery" },
-                            { name: "Residential Update", id: "gallery" },
-                            { name: "Commercial Projects", id: "gallery" }
+                            { name: "Dramatic Transformations", id: "TRANSFORMATIONS" },
+                            { name: "Antique Restoration", id: "ANTIQUES" },
+                            { name: "Residential Update", id: "RESIDENTIAL" },
+                            { name: "Commercial Projects", id: "COMMERCIAL" }
                         ].map((item) => (
                             <li key={item.name}>
                                 <button
